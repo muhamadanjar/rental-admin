@@ -38,4 +38,8 @@ class User extends Model{
     public function mobil(){
         return $this->hasMany(Config::get("rental.model_namespace") . "\Mobil","user_id","id")->orderBy('isselected','ASC');
     }
+
+    public function saldo(){
+        return $this->hasOne(Config::get("rental.model_namespace")."\UserSaldo","user_id");
+    }
 }

@@ -35,7 +35,7 @@
                         <td>{{ date('d-m-Y', strtotime($v->tgl_akhir))}}</td>
                         <td><span title="{{$v->description}}" class="desctooltips">{{ substr($v->description,0,40)}}...</span>
                         </td>
-                        <td><a class="fancycard" data-fancycard="fancycard" href="{{asset('files/uploads/promo/'.$v->foto)}}"><img src="{{asset('files/uploads/promo/'.$v->foto)}}" height="50px" width="50px" title="klik gambar untuk memperbesar" /></a></td>
+                        <td><a class="fancycard" data-fancycard="fancycard" href="{{ $v->getPermalink() . '/' . $v->foto }}"><img src="{{ $v->getPermalink() . '/' . $v->foto }}" height="50px" width="50px" title="klik gambar untuk memperbesar" /></a></td>
                         <td>
                             <div class="btn-group">
                                 <button data-toggle="dropdown" class="btn btn-xs btn-icon dropdown-toggle" type="button"><i class="icon-cog4"></i><span class="caret"></span></button>

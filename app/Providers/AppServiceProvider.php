@@ -26,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment() !== 'production') {
             $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         }
+        $this->app->bind('path.public', function () {
+            return realpath(__DIR__ . '/../../public');
+        });
     }
 }

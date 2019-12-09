@@ -68,7 +68,7 @@ class PromoCtrl extends BackendCtrl
         if(!is_dir($dir))
             mkdir($dir);
             $ext = pathinfo($_FILES["images"]["name"],PATHINFO_EXTENSION);
-            $filename = time().'_'.urlencode(pathinfo($_FILES["images"]["name"],PATHINFO_FILENAME)).'.'.$ext;
+            $filename = time().'_'.date('YmdHis').'.'.$ext;
             if(move_uploaded_file($_FILES["images"]["tmp_name"], $dir. $filename)){
                 return json_encode(array(
                     'error'=>false,

@@ -158,7 +158,7 @@
 @section('script-end')
 @parent
         
-<script src="{{ asset('plugins/select2/dist/js/select2.full.min.js')}}"></script>
+<script src="{{ asset('plugins/select2/js/select2.full.min.js')}}"></script>
 <script type="text/javascript" src="{{ url('/plugins/jquery-ui/js/jquery-ui.js')}}"></script>
 <script type="text/javascript" src="{{ url('/plugins/datatables/datatables.min.js')}}"></script>
 <script type="text/javascript">

@@ -29,7 +29,7 @@
                     @foreach($data as $k => $v)
                     <tr>
                         
-                        <td>{{ $v->req_user_id}}</td>
+                        <td>{{ $v->user }}</td>
                         <td>{{ $v->req_saldo}}</td>
                         <td>{{ $v->req_code}}</td>
                         <td>@if($v->req_file != 0)

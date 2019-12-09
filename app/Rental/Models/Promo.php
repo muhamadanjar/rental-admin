@@ -11,11 +11,11 @@ class Promo extends Model
     protected $dates = ['tgl_mulai','tgl_akhir'];
 
     public function getPermalink(){
-        return url('files/uploads/promo').DIRECTORY_SEPARATOR;
+        return url('storage/uploads/promo').DIRECTORY_SEPARATOR;
     }
     public function getPath(){
         
-        return public_path('files/uploads/promo').DIRECTORY_SEPARATOR;
+        return public_path('storage/uploads/promo').DIRECTORY_SEPARATOR;
     }
 
     public function getImagePathAttribute(){

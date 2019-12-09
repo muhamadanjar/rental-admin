@@ -426,7 +426,20 @@ function loadGoogleMaps() {
 
 (function ($, window, document) {
     sendData(`${Laravel.serverUrl}/backend/user/notifikasi`,'','GET',function(a) {
-        console.log(a);
+        let data = a.data;
+        $('span.notif_count').html(0);
+        $('.header_notifikasi').html(a.message);
+        data.map(function(v,i){
+            if (v.jenis == 'order') {
+                $( "<a class=\"dropdown-item\">" )
+                    .append("<i class='fa fa-users text-green'>")
+                        .append(v.message)
+                
+                .appendTo( $( ".menu_notifikasi" ) );
+            }
+            $('a.dropdown-item')
+            $('.menu_notifikasi')
+        });
         
     });
 

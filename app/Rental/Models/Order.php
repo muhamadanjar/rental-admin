@@ -10,10 +10,10 @@ class Order extends Model
     protected $primarykey = 'order_id';
 
     public function driver(){
-        return $this->belongsTo(UserAnggota::class,'user_id','id');
+        return $this->belongsTo(UserAnggota::class,'user_id','id')->where('isanggota',1);
     }
 
     public function customer(){
-        return $this->belongsTo(UserAnggota::class,'user_id','id');
+        return $this->belongsTo(UserAnggota::class,'user_id','id')->where('isanggota',2);
     }
 }

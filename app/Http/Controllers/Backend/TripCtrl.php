@@ -8,15 +8,14 @@ use DataTables;
 use DB;
 use App\User;
 use App\Trip;
-use App\Mobil\Repository as MobilInterface;
 use App\Notifications\OrderAccept;
 use App\Notifications\OrderCompleted;
 use Notification;
 class TripCtrl extends BackendCtrl
 {
     
-    public function __construct(MobilInterface $mobil){
-        $this->mobil = $mobil;
+    public function __construct(){
+        
     }
     public function index()
     {
