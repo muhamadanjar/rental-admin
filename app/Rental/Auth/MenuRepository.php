@@ -16,15 +16,6 @@ class MenuRepository extends BaseInterface implements cInterface
         $this->tbName = Config::get("Rental.menu.table");
     }
 
-    /**
-     * Generate menu available for user or group
-     *
-     * @author Bagus Wahyu Aprianto S.Kom
-     * @param $uid |int      user id
-     * @param $grpid |int    group id id
-     *
-     * @return array|static[]
-     */
     public function loadMenu($uid, $grpid)
     {
 

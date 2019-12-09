@@ -47,17 +47,6 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 	// Route::get('customer/{id}/edit', 'CustomerCtrl@edit')->name('customer.edit');
 	// Route::post('customer/{id}/update','CustomerCtrl@update')->name('customer.update');
 
-	// Route::post('customer/addsaldo','CustomerCtrl@add_saldo')->name('customer.addsaldo');
-	// Route::get('customer/request_saldo','CustomerCtrl@request_saldo')->name('customer.request_saldo');
-	// Route::post('customer/accept_request_saldo','CustomerCtrl@accept_request_saldo')->name('customer.accept_request_saldo');
-
-
-	//route req saldo
-	// Route::resource('reqsaldo', 'ReqSaldoCtrl', ['only' => ['index', 'create', 'edit', 'destroy','konfirmasi']]);
-	// Route::post('reqsaldo/post','ReqSaldoCtrl@post')->name('reqsaldo.post');
-	// Route::post('reqsaldo/{id}/konfirmasi','ReqSaldoCtrl@konfirmasi')->name('reqsaldo.konfirmasi');
-	// Route::get('reqsaldo/{id}/edit', 'ReqSaldoCtrl@edit')->name('reqsaldo.edit');
-	// Route::post('reqsaldo/{id}/update','ReqSaldoCtrl@update')->name('reqsaldo.update');	
 
 
 	// Route::resource('booking','BookingCtrl');
@@ -73,6 +62,18 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     Route::group(['prefix'=>'backend','namespace'=>'Backend','as'=>'backend.'],function(){
 
 
+        Route::get('user/notifikasi','BackendCtrl@getNotificationByUser');
+        Route::post('customer/addsaldo','CustomerCtrl@add_saldo')->name('customer.addsaldo');
+        Route::get('customer/request_saldo','CustomerCtrl@request_saldo')->name('customer.request_saldo');
+        Route::post('customer/accept_request_saldo','CustomerCtrl@accept_request_saldo')->name('customer.accept_request_saldo');
+
+
+        //route req saldo
+        Route::resource('reqsaldo', 'ReqSaldoCtrl', ['only' => ['index', 'create', 'edit', 'destroy','konfirmasi']]);
+        Route::post('reqsaldo/post','ReqSaldoCtrl@post')->name('reqsaldo.post');
+        Route::post('reqsaldo/{id}/konfirmasi','ReqSaldoCtrl@konfirmasi')->name('reqsaldo.konfirmasi');
+        Route::get('reqsaldo/{id}/edit', 'ReqSaldoCtrl@edit')->name('reqsaldo.edit');
+        Route::post('reqsaldo/{id}/update','ReqSaldoCtrl@update')->name('reqsaldo.update');	
 
         Route::resource('trip_job','TripCtrl');
         Route::post('trip_job/post','TripCtrl@post')->name('trip_job.post');

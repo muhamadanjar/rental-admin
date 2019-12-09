@@ -101,10 +101,11 @@
                       @foreach($orderList as $k => $v)
                       <tr>
                           <td><a href="#">{{$v->order_code}}</a></td>
-                          <td>@isset($v->driver)
+                          <td>
+                            @isset($v->driver)
                               {{$v->driver->name}}
-                          @endisset
-                        </td>
+                            @endisset
+                          </td>
                           <td><span class="badge badge-success">{{$v->order_status}}</span></td>
                           <td><span class="badge badge-info">{{$v->order_nominal}}</span></td>
                       </tr>
@@ -242,30 +243,43 @@
 				
 			});
 			function resLastPosition(a) {
-			
 					a.map((v,i)=>{
-						var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
-						var coordinate = transform([parseFloat(v.longitude), parseFloat(v.latitude)]);
-						var map = {
-							geometry: new ol.geom.Point(coordinate),
-							name: v.name
-						};
-						if (v.hasOwnProperty('mobil')) {
-							map.mobil = v.mobil;
-						}
-						var feature = new ol.Feature(map);
-						var iconStyle = new ol.style.Style({
-								image: new ol.style.Icon(({
-										anchor: [0.2, 32],
-										
-										scale: 0.3,
-										anchorXUnits: 'fraction',
-										anchorYUnits: 'pixels',
-										src: `${Laravel.serverUrl}/images/carMarker.png`
-								}))
-						});
-						feature.setStyle(iconStyle);
-						vectorSource.addFeature(feature);
+            let meta = v.meta;
+            let userData = v.users;
+            let mobilData = v.mobil;
+            meta.filter(function(word) {
+              if(word.meta_key == 'LOCATION'){
+                let split = word.meta_value.split(',');
+                var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
+                let coordinate = transform([parseFloat(split[1]), parseFloat(split[0])]);
+                
+                
+                var mapFeature = {
+                  geometry: new ol.geom.Point(coordinate),
+                  name: userData.name
+                };
+                if (v.hasOwnProperty('mobil')) {
+                  mapFeature.mobil = mobilData[0];
+                }
+                console.log(userData);
+                
+                var feature = new ol.Feature(mapFeature);
+                var iconStyle = new ol.style.Style({
+                    image: new ol.style.Icon(({
+                        anchor: [0.2, 32],
+                        
+                        scale: 0.3,
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        src: `${Laravel.serverUrl}/img/carMarker.png`
+                    }))
+                });
+                feature.setStyle(iconStyle);
+                vectorSource.addFeature(feature);
+              }
+              
+            })
+						
 					});
 				
       }
@@ -274,5 +288,7 @@
 
     
     </script>
+
+    <script type="text/javascript" src="{{ asset('js/rm.js') }}"></script>
     
 @endsection

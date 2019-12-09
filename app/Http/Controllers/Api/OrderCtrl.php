@@ -79,4 +79,15 @@ class OrderCtrl extends Controller{
         }
         
     }
+
+
+    private function set_notification($message, $user_id) {
+
+        $insert['notif_date'] = date('Y-m-d H:i:s');
+        $insert['notif_from'] = 'SYSTEM';
+        $insert['message']    = $message;
+        $insert['status']     = 0;
+        $insert['user_id']    = $user_id;
+        Notification::create($insert);
+    }
 }

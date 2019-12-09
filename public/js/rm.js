@@ -422,6 +422,15 @@ function loadGoogleMaps() {
 }(jQuery, window, document));
 //Upload
 
+
+
+(function ($, window, document) {
+    sendData(`${Laravel.serverUrl}/backend/user/notifikasi`,'','GET',function(a) {
+        console.log(a);
+        
+    });
+
+}(jQuery, window, document));
 //Form
 (function ($, window, document) {
     if ($('.start_at').length > 0) {

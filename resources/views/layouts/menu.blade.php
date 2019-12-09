@@ -53,7 +53,7 @@
 </li>
 
 <li class="nav-item">
-    <a href="{{ route('backend.dashboard.index')}}" class="nav-link">
+    <a href="{{ route('backend.reqsaldo.index')}}" class="nav-link">
     <i class="fas fa-circle nav-icon"></i>
     <p>Request Saldo</p>
     </a>

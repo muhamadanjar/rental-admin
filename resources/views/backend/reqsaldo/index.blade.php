@@ -1,33 +1,34 @@
 @extends('templates.adminlte.main')
 @section('content-admin')
     <div class="card card-default">
-        <div class="box-header with-border">
-            <h3 class="box-title">Request Saldo</h3>
-            <div class="box-tools text-right">
+        <div class="card-header with-border">
+            <h3 class="card-title">Request Saldo</h3>
+            <div class="card-tools text-right">
                 <div class="btn-group">
                     
                 </div>
             </div>
             
         </div>
-            <!-- /.box-header -->
-        <div class="box-body">
+            <!-- /.card-header -->
+        <div class="card-body">
         	<table class="display table" cellspacing="0" width="100%" id="table_promo">
                 <thead>
                     <tr>
-                        <th></th>
+                        
                         <th>User ID</th>
                         <th>Request Saldo</th>
                         <th>Request Code</th>
                         <th>Bukti TF</th>
                         <th>Status</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 
                 <tbody>
                     @foreach($data as $k => $v)
                     <tr>
-                        <td></td>
+                        
                         <td>{{ $v->req_user_id}}</td>
                         <td>{{ $v->req_saldo}}</td>
                         <td>{{ $v->req_code}}</td>

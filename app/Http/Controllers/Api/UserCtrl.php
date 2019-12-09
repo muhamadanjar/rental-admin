@@ -1,18 +1,17 @@
 <?php namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use App\User;
+use App\User as UserMobile;
 class UserCtrl extends Controller
 {
     public function getUserLocation(){
         $data  = array();
-        $ul = UserLocation::join('users','user_location.user_id','users.id')->select('users.*','user_location.latitude','user_location.longitude')->get();
-        foreach ($ul as $key => $value) {
-            $user = User::find($value->id);
-            $mobil = $user->mobil;
-            // $data[$key] = $user->toArray();
-            $ul[$key]->mobil = $mobil;
+        $ul = UserMobile::orderBy('id')->where('isanggota',1)->get();
+        foreach ($ul as $k => $v) {
+            $data[$k]['users'] = $v;
+            $data[$k]['meta'] = $v->user_metas;
+            $data[$k]['mobil'] = $v->mobil;
         }
-        return response()->json(['status'=>true,'data'=>$ul],200);
+        return response()->json(['status'=>true,'data'=>$data],200);
     }
 
     public function getDriverNearby(Request $request){

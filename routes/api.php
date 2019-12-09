@@ -33,3 +33,4 @@ Route::group([
 
 
 Route::get('user/location','Api\UserCtrl@getUserLocation');
+

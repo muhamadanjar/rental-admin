@@ -10,14 +10,12 @@ class DashboardCtrl extends BackendCtrl{
         parent::__construct();
     }
     public function getIndex(Request $request){
-        if($request->ajax()){
-        }
-        
+        if($request->ajax()){}
         $countuser = DB::table('users')->count();
         $totaldriver = DB::table('sys_tr_anggota')->where('is_anggota',1)->count();
         $totalcustomer = DB::table('sys_tr_anggota')->where('is_anggota',2)->count();
         $totalpemesanan = Order::count();
-
+        
         $orderList = Order::orderBy('order_tgl_pesanan','DESC')->paginate(10);
         return view('backend.dashboard.index')->with([
             'totaldriver'=>$totaldriver,
@@ -30,6 +28,18 @@ class DashboardCtrl extends BackendCtrl{
     }
     public function index(){
         $countuser = DB::table('users')->count();
-        return view('backend.dashboard.index')->with(['countuser'=>$countuser]);
+        $totaldriver = DB::table('sys_tr_anggota')->where('is_anggota',1)->count();
+        $totalcustomer = DB::table('sys_tr_anggota')->where('is_anggota',2)->count();
+        $totalpemesanan = Order::count();
+        
+        $orderList = Order::orderBy('order_tgl_pesanan','DESC')->paginate(10);
+        return view('backend.dashboard.index')->with([
+            'totaldriver'=>$totaldriver,
+            'totalcustomer'=>$totalcustomer,
+            'totalpemesanan' => $totalpemesanan,
+            'countuser'=>$countuser,
+            'totalpengunjung'=>0,
+            'orderList'=>$orderList,
+        ]);
     }
 }

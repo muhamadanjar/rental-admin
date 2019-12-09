@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
-use App\reqsaldo;
-use App\userprofile;
+use App\Rental\Models\ReqSaldo;
 
 class ReqSaldoCtrl extends BackendCtrl
 {
     public function index()
 	{
-		$data = reqsaldo::all();
+		$data = ReqSaldo::all();
 		return view('backend.reqsaldo.index',compact('data'));
 	}
 
 	public function konfirmasi(Request $request, $id)
 	{
-		$data = reqsaldo::find($id);
+		$data = ReqSaldo::find($id);
 		$reqUserId = $data->req_user_id;
 		$data->status = $request->changeStatus;
 		

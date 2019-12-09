@@ -32,6 +32,6 @@ self.addEventListener('message', function(a) {
 		break;
 		
 		default:
-				self.postMessage(1/x);
+			self.postMessage(1/x);
 	}
 }, false);
