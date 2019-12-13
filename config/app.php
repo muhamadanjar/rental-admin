@@ -169,6 +169,7 @@ return [
          */
         // Yajra\DataTables\DataTablesServiceProvider::class,
         // Yajra\Datatables\DatatablesServiceProvider::class
+        App\Providers\RentalServiceProvider::class,
         /*
          * Application Service Providers...
          */

@@ -47,7 +47,15 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 	// Route::get('customer/{id}/edit', 'CustomerCtrl@edit')->name('customer.edit');
 	// Route::post('customer/{id}/update','CustomerCtrl@update')->name('customer.update');
 
-
+    Route::get('admin/booking',
+        ['as' => 'admin-booking',
+            'uses' => 'Backend\BookingCtrl@view',]);
+    Route::get('admin/loan_submission/data',
+        ['as' => 'admin-booking-ajaxData',
+            'uses' => 'Backend\BookingCtrl@data',]);
+    Route::get('admin/booking/read/{id}',
+        ['as' => 'admin-booking-view',
+            'uses' => 'Backend\BookingCtrl@read',]);
 
 	// Route::resource('booking','BookingCtrl');
 	// Route::resource('report','ReportCtrl');

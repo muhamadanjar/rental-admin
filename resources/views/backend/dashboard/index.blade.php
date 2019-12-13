@@ -203,6 +203,7 @@
 
 			worker.addEventListener('message', function(a) {
 				if (a.data.cmd === 'resLastPosition') { resLastPosition(a.data.val); }
+        if (a.data.cmd === 'resLastNotif') { resLastNotif(a.data.val); }
 			});
 			vectorSource = new ol.source.Vector();
       vectorLayer = new ol.layer.Vector({
@@ -252,8 +253,6 @@
                 let split = word.meta_value.split(',');
                 var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
                 let coordinate = transform([parseFloat(split[1]), parseFloat(split[0])]);
-                
-                
                 var mapFeature = {
                   geometry: new ol.geom.Point(coordinate),
                   name: userData.name
@@ -261,7 +260,7 @@
                 if (v.hasOwnProperty('mobil')) {
                   mapFeature.mobil = mobilData[0];
                 }
-                console.log(userData);
+                // console.log(userData);
                 
                 var feature = new ol.Feature(mapFeature);
                 var iconStyle = new ol.style.Style({
@@ -283,7 +282,17 @@
 					});
 				
       }
+
+      function resLastNotif(a) {
+        console.log(a);
+        $('.notif_count').html(0);
+        $('.menu_header').html('Tidak ada Pemberitahuan');
+        a.map(function(v,i){
+
+        })
+      }
       worker.postMessage({ cmd: 'reqLastPosition', val: `${Laravel.serverUrl}/api/user/location`});
+      worker.postMessage({ cmd: 'reqLastNotif', val: `${Laravel.serverUrl}/backend/user/notifikasi`});
     });
 
     

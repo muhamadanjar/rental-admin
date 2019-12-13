@@ -7,11 +7,27 @@ use App\Http\Controllers\Controller;
 use App\Rental\Models\Order;
 use App\User;
 class OrderCtrl extends Controller{
-    public function orderReguler(Request $request){
-        
+    public function postOrder(Request $request){
+        try {
+            DB::beginTransaction();
+            $orderCode = substr(number_format(time() * rand(),0,'',''),0,10);
+            $model = new Order();
+            $model->order_code = $orderCode;
+            $exec = $model->save();
+            DB::commit();
+
+            // $this->set_notification($message,auth()->user()->id);
+
+            if(!$exec){
+                DB::rollBack();
+                return response()->json(['status'=>'error', 'message'=>'Error Accoured', 'code'=>404]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
-    public function updateTripStatus(Request $request){
+    public function postUpdateOrder(Request $request){
         try {
             $t = Trip::find($request->trip_id);
             if ($t == NULL) { return response()->json(['status'=>false,'message'=>'Data Trip tidak di temukan']);}
@@ -24,7 +40,7 @@ class OrderCtrl extends Controller{
         
     }
 
-    public function post_request_saldo(Request $request){
+    public function postTopUpSaldo(Request $request){
         try {
             $auth = Auth::guard('api')->user();
             if($auth){
@@ -44,11 +60,9 @@ class OrderCtrl extends Controller{
         } catch (\Throwable $th) {
             return response()->json(['status'=>false,'message'=>$th->getMessage()]);
         }
-        
-        
     }
 
-    public function post_upload_bukti(Request $request){
+    public function postUploadBukti(Request $request){
         try {
             $auth = Auth::guard('api')->user();
             if($auth){
@@ -77,12 +91,95 @@ class OrderCtrl extends Controller{
         } catch (\Throwable $th) {
             return response()->json(['status'=>false,'message'=>$th->getMessage()]);
         }
+    }
+
+    public function getDriverNearby(Request $request){
+        $latitude = $request->get('latitude');
+        $longitude = $request->get('longitude');
+        $radius  = ($request->get('radius') == NULL ? 25: $request->get('radius') );
+        $errors = [];
         
+        if ($latitude != null && $longitude != null) {
+            $location = UserLocation::select(DB::raw('id, ( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
+            ->having('distance', '<', $radius)
+            ->orderBy('distance')
+            ->get();
+        }else{
+            if ($latitude == null) {
+                $errors['latitude'] = 'Latitude is Required';
+            }
+            if ($longitude == null) {
+                $errors['longitude'] = 'Longitude is Required';
+            }
+        }
+        
+        if ($errors) {
+            return response()->json(['status'=>false,'message'=>implode($errors,',')]);
+        }
+        return response()->json(['status'=>true,'data'=>$location]);
+    }
+
+    public function getHistoryOrderByUser($type = 1){
+        try {
+            $auth = Auth::guard('api');
+            $user = $auth->user();
+            if($user->isRole('customer')){
+                $trip = Trip::where('trip_bookby',$user->id)->orderBy('trip_date','DESC')->get();
+                $trip_count = Trip::where('trip_bookby',$user->id)->where('trip_type',$type)->orderBy('trip_date','DESC')->count();
+            }else if($user->isRole('driver')){
+                $trip = Trip::where('trip_driver',$user->id)->orderBy('trip_date','DESC')->get();
+                $trip_count = Trip::where('trip_driver',$user->id)->where('trip_type',$type)->orderBy('trip_date','DESC')->count();
+            }
+            
+            if ($trip_count<=0) {
+                $message = 'Anda Belum Memiliki Transaksi';
+            }
+            return response()->json(['status'=>true,'data'=>$trip,'message'=>$message]);
+        } catch (\Exception $e) {
+            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+        }
+    }
+
+    public function getOrder(Request $request){
+        $res = array();
+        $status = 500;
+        try {
+            $auth = Auth::guard('api')->user();
+            $message = "User tidak di temukan";
+            if ($auth !== NULL) {
+                $profile = $auth->profile;
+                $message = "";
+                $query = Trip::where(function($q) use ($auth){
+                    if ($auth->isRole('driver')) {
+                        $q->where('trip_driver',$auth->id);
+                    }
+                    $q->where('trip_status','<',Trip::STATUS_DECLINE);
+                })->join('trip_detail','trip.trip_id','trip_detail.trip_id')
+                ->join('tm_customer','trip_bookby','tm_customer.id')
+                ->select('trip.*','tm_customer.name as trip_customer','trip_detail.*')
+                ->orderBy('trip_date','DESC');
+                $sql = $query->toSql();
+                $bindings = $query->getBindings();
+                $cp = $query->first();
+                // dd($bindings);
+                $message = ($cp===NULL) ? 'Tidak ada Transaksi Perjalanan' : 'Perjalanan dengan code '.$cp->trip_code; ;
+                $res['data'] = $cp;
+                $res['status'] = true;
+                $status = $this->successStatus;
+            }
+            $res['message'] = $message;
+            
+            
+        } catch (\Exception $e) {
+            $status = 400;
+            $res['error'] = true;
+            $res['message'] = $e->getMessage();
+        }
+        return response()->json($res,$status);
     }
 
 
     private function set_notification($message, $user_id) {
-
         $insert['notif_date'] = date('Y-m-d H:i:s');
         $insert['notif_from'] = 'SYSTEM';
         $insert['message']    = $message;

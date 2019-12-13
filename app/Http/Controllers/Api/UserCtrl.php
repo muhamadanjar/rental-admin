@@ -14,33 +14,9 @@ class UserCtrl extends Controller
         return response()->json(['status'=>true,'data'=>$data],200);
     }
 
-    public function getDriverNearby(Request $request){
-        $latitude = $request->get('latitude');
-        $longitude = $request->get('longitude');
-        $radius  = ($request->get('radius') == NULL ? 25: $request->get('radius') );
-        $errors = [];
-        
-        if ($latitude != null && $longitude != null) {
-            $location = UserLocation::select(DB::raw('id, ( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
-            ->having('distance', '<', $radius)
-            ->orderBy('distance')
-            ->get();
-        }else{
-            if ($latitude == null) {
-                $errors['latitude'] = 'Latitude is Required';
-            }
-            if ($longitude == null) {
-                $errors['longitude'] = 'Longitude is Required';
-            }
-        }
-        
-        if ($errors) {
-            return response()->json(['status'=>false,'message'=>implode($errors,',')]);
-        }
-        return response()->json(['status'=>true,'data'=>$location]);
-    }
+    
 
-    public function userUpdateLocation(Request $request){
+    public function postUpdateLocation(Request $request){
         try {
             $user = Auth::guard('api')->user();
             if($user){
@@ -73,7 +49,8 @@ class UserCtrl extends Controller
         }
         
     }
-    public function userChangeOnline(){
+
+    public function postChangeStatusOnline(){
         try {
             $user = Auth::guard('api')->user();
             $profile = UserProfile::where('user_id',$user->id)->first();
@@ -93,4 +70,6 @@ class UserCtrl extends Controller
             return response()->json(['status'=>false,'message'=>$e->getMessage()]);
         }
     }
+
+    
 }

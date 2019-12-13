@@ -33,4 +33,11 @@ Route::group([
 
 
 Route::get('user/location','Api\UserCtrl@getUserLocation');
+//Common
 
+Route::get('car-types/{id?}','Api\CommonCtrl@getTypeCar');
+Route::get('packages/{id?}','Api\CommonCtrl@getRentPackage');
+Route::get('promo/{id?}','Api\CommonCtrl@getPromo');
+Route::get('bank/{id?}','Api\CommonCtrl@getBank');
+Route::get('services-type/{id?}','Api\CommonCtrl@getServiceType');
+Route::get('global-settings','Api\CommonCtrl@getSettings');
