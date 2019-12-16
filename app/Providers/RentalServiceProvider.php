@@ -28,6 +28,7 @@ class RentalServiceProvider extends ServiceProvider
         $services = [
             'App\Rental\RepositoryInterface' => 'App\Rental\EloquentRepository',
             'App\Rental\Contract\IOrderRepository' => 'App\Rental\Repository\Order\OrderRepository',
+            'App\Rental\Contract\IAdministrasiUserRepository' => 'App\Rental\Repository\AdministrasiUser\AdministrasiUserRepository',
         ];
 
         foreach ($services as $contract => $service) {

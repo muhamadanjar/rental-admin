@@ -45,12 +45,26 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 	// Route::resource('customer', 'CustomerCtrl', ['only' => ['index', 'create', 'edit', 'destroy']]);
 	// Route::post('customer/post','CustomerCtrl@post')->name('customer.post');
 	// Route::get('customer/{id}/edit', 'CustomerCtrl@edit')->name('customer.edit');
-	// Route::post('customer/{id}/update','CustomerCtrl@update')->name('customer.update');
+    // Route::post('customer/{id}/update','CustomerCtrl@update')->name('customer.update');
+    // Route::resource('driver','DriverCtrl');
+    // Route::post('driver','DriverCtrl@post')->name('driver.post');
+    // Route::post('driver/change_photo','DriverCtrl@change_photo')->name('driver.change_photo');
+    // Route::post('driver/addsaldo','DriverCtrl@add_saldo')->name('driver.addsaldo');
+    
+    Route::get('driver','Backend\DriverCtrl@view')->name('driver');
+    Route::get('driver/data','Backend\DriverCtrl@data')->name('driver-ajaxData');
+
+    Route::get('customer','Backend\CustomerCtrl@view')->name('customer');
+    Route::get('customer/data','Backend\CustomerCtrl@data')->name('customer-ajaxData');
+
+    Route::post('customer/addsaldo','Backend\CustomerCtrl@add_saldo')->name('customer.addsaldo');
+    Route::get('customer/request_saldo','Backend\CustomerCtrl@request_saldo')->name('customer.request_saldo');
+    Route::post('customer/accept_request_saldo','Backend\CustomerCtrl@accept_request_saldo')->name('customer.accept_request_saldo');
 
     Route::get('admin/booking',
         ['as' => 'admin-booking',
             'uses' => 'Backend\BookingCtrl@view',]);
-    Route::get('admin/loan_submission/data',
+    Route::get('admin/booking/data',
         ['as' => 'admin-booking-ajaxData',
             'uses' => 'Backend\BookingCtrl@data',]);
     Route::get('admin/booking/read/{id}',
@@ -58,22 +72,21 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
             'uses' => 'Backend\BookingCtrl@read',]);
 
 	// Route::resource('booking','BookingCtrl');
-	// Route::resource('report','ReportCtrl');
-	// Route::get('report','ReportCtrl@index')->name('report');
-	// Route::resource('car','ReportCtrl');
-	// Route::get('car','ReportCtrl@index')->name('car');
-    // Route::get('setting/fare','SettingCtrl@fare')->name('setting.fare');
+	
+    Route::get('report/pemesanan','Backend\ReportCtrl@pemesanan')->name('report.pemesanan');
+    Route::get('report/customer','Backend\ReportCtrl@customer')->name('report.customer');
+    Route::get('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
+    Route::post('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
+
+    Route::get('setting/fare','Backend\SettingCtrl@fare')->name('backend.setting.fare');
+    Route::post('setting/fare','Backend\SettingCtrl@fare')->name('backend.setting.fare');
     
     // Route::resource('pengumuman', 'PengumumanCtrl', ['only' => ['index', 'create', 'edit', 'destroy']]);
 	// Route::post('pengumuman/post', 'PengumumanCtrl@postPengumuman')->name('pengumuman.post');
 
     Route::group(['prefix'=>'backend','namespace'=>'Backend','as'=>'backend.'],function(){
-
-
         Route::get('user/notifikasi','BackendCtrl@getNotificationByUser');
-        Route::post('customer/addsaldo','CustomerCtrl@add_saldo')->name('customer.addsaldo');
-        Route::get('customer/request_saldo','CustomerCtrl@request_saldo')->name('customer.request_saldo');
-        Route::post('customer/accept_request_saldo','CustomerCtrl@accept_request_saldo')->name('customer.accept_request_saldo');
+        
 
 
         //route req saldo
@@ -89,10 +102,7 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
         Route::get('trip_job/{trip_id}/detail','TripCtrl@get_detail');
         
         Route::resource('reviews','ReviewCtrl');
-        // Route::resource('driver','DriverCtrl');
-        // Route::post('driver','DriverCtrl@post')->name('driver.post');
-        // Route::post('driver/change_photo','DriverCtrl@change_photo')->name('driver.change_photo');
-        // Route::post('driver/addsaldo','DriverCtrl@add_saldo')->name('driver.addsaldo');
+        
 
         Route::resource('services','ServiceCtrl');
         Route::resource('packages','PackageCtrl',['only'=>['index']]);

@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 
 class ReportCtrl extends BackendCtrl
 {
-    public function index(){
-        # code...
+    public function pemesanan(Request $request){
+        
+    }
+
+    public function customer(Request $request){
+        
     }
 }

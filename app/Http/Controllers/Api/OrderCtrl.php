@@ -6,17 +6,36 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Rental\Models\Order;
 use App\User;
+use App\Rental\Models\User as UserAdmin;
+use Carbon\Carbon;
 class OrderCtrl extends Controller{
     public function postOrder(Request $request){
+        $auth = auth('api')->user();
         try {
             DB::beginTransaction();
             $orderCode = substr(number_format(time() * rand(),0,'',''),0,10);
             $model = new Order();
             $model->order_code = $orderCode;
+            $model->order_user_id = $auth->id;
+            $model->order_address_origin = $request->order_address_origin;
+            $model->order_address_origin_lat = $request->order_address_origin_lat;
+            $model->order_address_origin_lng = $request->order_address_origin_lng;
+
+            $model->destination_address_origin = $request->destination_address_origin;
+            $model->destination_address_origin_lat = $request->destination_address_origin_lat;
+            $model->destination_address_origin_lng = $request->destination_address_origin_lng;
+
+            $model->order_jenis = $request->order_jenis;
+            $model->order_nominal = $request->order_nominal;
+            $model->order_tgl_pesanan = Carbon::now();
+            $model->order_keterangan = $request->order_keterangan;
+            $model->order_status = 1;
             $exec = $model->save();
             DB::commit();
-
-            // $this->set_notification($message,auth()->user()->id);
+            if ($exec) {
+                $admin = UserAdmin::first();
+                $this->set_notification($message,$admin->id_user);
+            }
 
             if(!$exec){
                 DB::rollBack();
@@ -181,7 +200,7 @@ class OrderCtrl extends Controller{
 
     private function set_notification($message, $user_id) {
         $insert['notif_date'] = date('Y-m-d H:i:s');
-        $insert['notif_from'] = 'SYSTEM';
+        $insert['notif_from'] = 'USER';
         $insert['message']    = $message;
         $insert['status']     = 0;
         $insert['user_id']    = $user_id;

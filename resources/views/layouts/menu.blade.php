@@ -70,13 +70,13 @@
     <ul class="nav nav-treeview">
         
         <li class="nav-item">
-        <a href="" class="nav-link">
+        <a href="{{ route('driver') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Driver</p>
             </a>
         </li>
         <li class="nav-item">
-            <a href="" class="nav-link">
+            <a href="{{ route('customer') }}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Customer</p>
                 </a>
@@ -95,9 +95,32 @@
     <ul class="nav nav-treeview">
         
         <li class="nav-item">
-        <a href="{{ route('backend.trip_job.index') }}" class="nav-link">
+        <a href="{{ route('admin-booking') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Trip</p>
+            </a>
+        </li>
+    </ul>
+</li>
+<li class="nav-item">
+    <a href="#" class="nav-link">
+    <i class="fas fa-circle nav-icon"></i>
+    <p>Laporan
+        <i class="fas fa-angle-left right"></i>
+    </p>
+    
+    </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Pemesanan</p>
+                </a>
+            </li>
+        <li class="nav-item">
+        <a href="" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Customer</p>
             </a>
         </li>
     </ul>
@@ -116,6 +139,12 @@
             <a href="" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Umum</p>
+                </a>
+            </li>
+        <li class="nav-item">
+            <a href="{{ route('backend.setting.fare')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Harga</p>
                 </a>
             </li>
         <li class="nav-item">

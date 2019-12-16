@@ -1,6 +1,9 @@
 <?php namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\User as UserMobile;
+use Illuminate\Http\Request;
+use Auth;
+use App\Rental\Models\UserSaldo;
 class UserCtrl extends Controller
 {
     public function getUserLocation(){
@@ -13,8 +16,6 @@ class UserCtrl extends Controller
         }
         return response()->json(['status'=>true,'data'=>$data],200);
     }
-
-    
 
     public function postUpdateLocation(Request $request){
         try {
@@ -32,15 +33,15 @@ class UserCtrl extends Controller
     }
     public function userTopUpWallet(Request $request){
         try {
-            $user = Auth::guard('api')->user();
-            $up = UserProfile::where('user_id',$user->id)->first();
+            $user = $request->user('api');
+            $up = UserSaldo::where('user_id',$user->id)->first();
             if($up != null){
-                $up->wallet = $request->wallet;
+                $up->saldo = $request->wallet;
                 $up->save();
             }else{
-                $up =  new UserProfile();
+                $up =  new UserSaldo();
                 $up->user_id = $user->id;
-                $up->wallet = $request->wallet;
+                $up->saldo = $request->saldo;
                 $up->save();
             }
             return response()->json(['status'=>true,'message'=>'Anda Berhasil Menambah Dana']);    
@@ -50,22 +51,12 @@ class UserCtrl extends Controller
         
     }
 
-    public function postChangeStatusOnline(){
+    public function postChangeStatusOnline(Request $request){
         try {
-            $user = Auth::guard('api')->user();
-            $profile = UserProfile::where('user_id',$user->id)->first();
-            if($profile !== null){
-                $isonline = $user->profile;
-                $profile = DB::table('user_profile')
-                ->where('user_id',$user->id)
-                ->update(['isonline'=>!$isonline->isonline]);    
-            }else{
-                $p = new UserProfile();
-                $p->user_id = $user->id;
-                $p->isonline = 1;
-                $p->save();
-            }
-            return response()->json(['status'=>true,'data'=>$profile,'message'=>'Data Online Berhasil di ubah']);
+            $user = $request->user('api');
+            $user->isavail = ($user->isavail == 1) ? 0 : 1 ;
+            $user->save();
+            return response()->json(['status'=>true,'data'=>'','message'=>'Data Online Berhasil di ubah']);
         } catch (\Exception $e) {
             return response()->json(['status'=>false,'message'=>$e->getMessage()]);
         }

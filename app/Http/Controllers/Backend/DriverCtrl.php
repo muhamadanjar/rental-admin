@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
+use Illuminate\Http\Request as httpRequest;
 use App\User;
 use App\UserProfile;
-use App\Role;
-use App\Mobil\Merk;
-use App\Mobil\Type;
 use DB;
-use App\Mobil\Models\Mobil;
 use Validator;
-use App\Mobil\Repository;
+use App\Http\Controllers\MainCtrl;
+use App\Rental\Contract\IAdministrasiUserRepository as currentRepo;
+
 use Laracasts\Flash\Flash;
-class DriverCtrl extends BackendCtrl{
+class DriverCtrl extends MainCtrl{
     private $roleName;
-    public function __construct(Repository $repo){
+    public function __construct(httpRequest $request, currentRepo $repository){
+        parent::__construct($request, $repository);
         $this->roleName = 'driver';
-        $this->mobil = $repo;
     }
     public function index(){
         $role = Role::where('name',$this->roleName)->first();

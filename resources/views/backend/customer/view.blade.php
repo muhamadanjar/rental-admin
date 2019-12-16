@@ -68,7 +68,7 @@
 $(function(){
     $("#table_data").DataTable({
         pageLength: '10',
-        ajax: '{!! route('admin-booking-ajaxData') !!}',
+        ajax: '{!! route('customer-ajaxData') !!}',
         ordering: false,
         aoColumns: [
             { "mData": "order_code"},

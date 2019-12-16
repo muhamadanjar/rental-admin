@@ -11,7 +11,7 @@ use Laracasts\Flash\Flash;
 use App\Http\Controllers\MainCtrl;
 use Illuminate\Http\Request as httpRequest;
 use App\Rental\Contract\IOrderRepository as currentRepo;
-use Yajra\Datatables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Hash;
 use Session;
 use Auth;
@@ -49,15 +49,26 @@ class BookingCtrl extends MainCtrl{
         // }
     }
 
-    public function data($input){
+    public function data(){
         @$input['status'] = $status;
         @$input['keyword'] = $request->keyword;
 
-        $buffer = $this->repository->data_pemesanan($input);
-
+        $buffer = $this->repository->data_pemesanan();
         return Datatables::of($buffer)
+        ->addColumn('action', function ($d) {
+            $content = '<div class="btn-group">';
+            $content .= '<a href="'.route('admin-booking-view',[$d->order_id]).'" class="btn btn-xs btn-primary btn-edit"><i class="fas fa-paper-plane"></i> </a>';
+            $content .= '<a href="#" class="btn btn-xs btn-primary btn-detail"><i class="fa fa-map"></i></a>';
+            $content .= '</div>';
+            return $content;
+        })
             ->make(true);
     
+    }
+
+    public function read($id)
+    {
+        
     }
 
 }

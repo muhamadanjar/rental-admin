@@ -32,7 +32,7 @@ Route::group([
 });
 
 
-Route::get('user/location','Api\UserCtrl@getUserLocation');
+
 //Common
 
 Route::get('car-types/{id?}','Api\CommonCtrl@getTypeCar');
@@ -41,3 +41,11 @@ Route::get('promo/{id?}','Api\CommonCtrl@getPromo');
 Route::get('bank/{id?}','Api\CommonCtrl@getBank');
 Route::get('services-type/{id?}','Api\CommonCtrl@getServiceType');
 Route::get('global-settings','Api\CommonCtrl@getSettings');
+
+//Order
+Route::post('booking','Api\OrderCtrl@postOrder');
+Route::post('booking/{id}','Api\OrderCtrl@postUpdateOrder');
+
+//User
+Route::get('user/location','Api\UserCtrl@getUserLocation');
+Route::post('user/changestatus','Api\UserCtrl@postChangeStatusOnline');

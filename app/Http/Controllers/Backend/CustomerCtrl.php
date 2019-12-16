@@ -2,25 +2,43 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Illuminate\Http\Request;
-use App\Customer;
-use App\Kabupaten;
-use App\UserProfile;
+use Illuminate\Http\Request as httpRequest;
+use App\Rental\Contract\IAdministrasiUserRepository as currentRepo;
 use DB;
 use App\User;
 use Laracasts\Flash\Flash;
-class CustomerCtrl extends BackendCtrl{
-	public function index()
-	{
-		// $data = Customer::all();
-		$data = DB::table('tm_customer')->get();
-		return view('backend.customer.index',compact('data'));
-	}
+use App\Http\Controllers\MainCtrl;
+use Yajra\DataTables\Facades\DataTables;
+use Hash;
+use Session;
+use Auth;
+use Crypt;
+use Gate;
 
-	public function create()
+class CustomerCtrl extends MainCtrl{
+
+	public function __construct(httpRequest $request, currentRepo $repository){
+		parent::__construct($request, $repository);
+		$this->param = array(
+            'view' =>"backend.customer.view",
+            'view_show' => "backend.customer.show",
+        );
+	}
+	public function view(){
+		return \Response::view($this->param['view']);
+	}
+	public function data()
 	{
-		$kota = Kabupaten::orderBy('nama_kabupaten','asc')->get();
-		return view('backend.customer.form', compact('kota'));
+		$buffer = $this->repository->getUserData('customer');
+		return Datatables::of($buffer)
+        ->addColumn('action', function ($d) {
+            $content = '<div class="btn-group">';
+            $content .= '<a href="'.route('admin-booking-view',[$d->order_id]).'" class="btn btn-xs btn-primary btn-edit"><i class="fas fa-paper-plane"></i> </a>';
+            $content .= '<a href="#" class="btn btn-xs btn-primary btn-detail"><i class="fa fa-map"></i></a>';
+            $content .= '</div>';
+            return $content;
+        })
+            ->make(true);
 	}
 
 	public function post(Request $request)
@@ -30,52 +48,7 @@ class CustomerCtrl extends BackendCtrl{
 		return redirect()->route('backend.customer.index')->with('flash.success','berhasil');
 	}
 
-	public function edit($id){
-		$data = User::join('user_profile','id','user_id')->where('user_id',$id)
-		->select('users.*','user_profile.wallet','user_profile.no_telepon','user_profile.address','user_profile.tgl_lahir')
-		->first();
-		
-		// $data = Customer::findOrFail($id);
-		$kota = Kabupaten::orderBy('nama_kabupaten','asc')->get();
-		return view('backend.customer.edit',compact('data','kota'));
-	}
-
-	public function update(Request $request, $id)
-	{
-		try {
-			$user = User::find($id);
-			$user->isactived = $request->status;
-			$user->isverified = $request->status;
-			$c = UserProfile::where('user_id',$request->id)->first();
-			$user->name = $request->name;
-			$c->tgl_lahir = $request->tgl_lahir;
-			$c->no_telepon = $request->no_telepon;
-			// $c->address = $request->address;
-			// $c->pendidikan = $request->pendidikan;
-			// $c->city_id = $request->city_id;
-
-			if($request->oldpassword == $request->password){
-                $user->password = $request->oldpassword;        
-            }else{
-                $user->password = bcrypt($request->password);           
-            }
-			$c->save();
-			$user->save();
-			return redirect()->route('backend.customer.index')->with('flash.success','Customer berhasil di update');
-		} catch (\Throwable $th) {
-			return redirect()->route('backend.customer.index')->with('flash.error',$th->getMessage());
-		}
-		
-
-		
-	}
-    
-    public function destroy($id)
-    {
-    	User::findOrFail($id)->delete();
-    	return redirect()->route('backend.customer.index');
-
-	}
+	
 	
 	public function add_saldo(Request $request){
 		$c = UserProfile::where('user_id',$request->user_id)->first();

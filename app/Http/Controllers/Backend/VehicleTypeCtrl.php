@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
-use App\Mobil\Models\Type;
+use App\Rental\Models\CarType;
 use Laracasts\Flash\Flash;
 class VehicleTypeCtrl extends BackendCtrl{
      public function __construct(){
          parent::__construct();
      }
-     public function index(Type $var = null){
+     public function index(CarType $var = null){
         session(['aksi'=>'add']);
-        $type = Type::get();
+        $type = CarType::get();
         return view('backend.driver.type')->with(['type'=>$type]);
      }
     public function create(Request $request){
         session(['aksi'=>'add']);
-        $t = new Type();
+        $t = new CarType();
         return view('backend.driver.type-form')->with(['type'=>$t]);
     }
     public function edit($id){

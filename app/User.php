@@ -4,10 +4,13 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Rental\Models\Mobil;
 use Config;
-class User extends Model{
-    public $timestamps = false;
+use Laravel\Passport\HasApiTokens;
+class User extends Authenticatable{
+    use Notifiable,HasApiTokens;
+    public $timestamps = true;
     protected $table = 'users';
     protected $fillable = [
         'username','name', 'email', 'password',

@@ -11,7 +11,7 @@ class OrderRepository extends BaseInterface implements cInterface
 		parent::__construct(new Order());
     }
     
-    public function data_pemesanan($input){
+    public function data_pemesanan(){
         $data = Order::orderBy('order_tgl_pesanan','DESC')->get();
         return $data;
     }
