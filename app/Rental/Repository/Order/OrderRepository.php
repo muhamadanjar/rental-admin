@@ -3,6 +3,7 @@ namespace App\Rental\Repository\Order;
 use App\Rental\Contract\IOrderRepository as cInterface;
 use App\Rental\EloquentRepository as BaseInterface;
 use App\Rental\Models\Order;
+use App\User;
 class OrderRepository extends BaseInterface implements cInterface
 {
     protected $parent;
@@ -14,5 +15,9 @@ class OrderRepository extends BaseInterface implements cInterface
     public function data_pemesanan(){
         $data = Order::orderBy('order_tgl_pesanan','DESC')->get();
         return $data;
+    }
+
+    public function getDrivers(){
+        return User::where('isavail',1)->where('isanggota',1)->get();
     }
 }

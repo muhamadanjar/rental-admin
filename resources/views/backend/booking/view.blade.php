@@ -20,7 +20,8 @@
                         <th>Trip Type</th>
                         <th>Book By</th>
                         <th>Book No</th>
-                        <th>Alamat Awal / Tujuan</th>
+                        <th>Jemput</th>
+                        <th>Tujuan</th>
                         <th>Tanggal Pemesanan</th>
                         <th>Driver</th>
                         <th>Customer</th>
@@ -42,8 +43,8 @@
 @section('title','Data Transaksi')
 @section('style-head')
 @parent
-<link rel="stylesheet" href="{{ url('/plugins/datatables/datatables.min.css')}}">
 <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 <link rel="stylesheet" href="https://openlayers.org/en/v5.3.0/css/ol.css" type="text/css">
 
 <style>
@@ -62,6 +63,8 @@
 <script type="text/javascript" src="{{ url('/plugins/bootbox/js/bootbox.js') }}"></script>
 <script type="text/javascript" src="{{ asset('plugins/datatables/jquery.dataTables.js')}}"></script>
 <script type="text/javascript" src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+<script type="text/javascript" src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
+<script type="text/javascript" src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 
 <script>
 
@@ -70,17 +73,19 @@ $(function(){
         pageLength: '10',
         ajax: '{!! route('admin-booking-ajaxData') !!}',
         ordering: false,
+        responsive:true,
         aoColumns: [
             { "mData": "order_code"},
             { "mData": "order_jenis"},
             { "mData": "created_by"},
             { "mData": "order_code"},
-            { "mData": "order_address_origin"},
+            { "mData": "order_address_origin", "width": 200},
+            { "mData": "order_address_destination"},
             { "mData": "order_tgl_pesanan"},
             { "mData": "order_driver_id"},
             { "mData": "order_user_id"},
             { "mData": "order_nominal"},
-            { "mData": "order_status"},
+            { "mData": "status_order"},
             { "mData": "action"},
         ],
         "columnDefs": [

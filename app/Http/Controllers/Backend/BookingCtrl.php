@@ -62,13 +62,56 @@ class BookingCtrl extends MainCtrl{
             $content .= '</div>';
             return $content;
         })
-            ->make(true);
+        ->addColumn('status_order', function ($d) {
+            
+            $content = '<a href="#" class="badge bg-cyan">'.$d->status.'</a>';
+            
+            return $content;
+        })
+        ->editColumn('order_jenis',function($d){
+            $content = ($d->order_jenis==1) ? 'Rentcar' : 'Reguler' ;
+            return $content;
+        })
+        ->editColumn('order_user_id',function($d){
+
+            $content = $d->order_user_id;
+            if (isset($d->customer)) {
+                $content = $d->customer->name;
+            }
+            return $content;
+        })
+        ->editColumn('order_driver_id',function($d){
+
+            $content = 'Belum ada Driver';
+            if (isset($d->driver)) {
+                $content = $d->driver->name;
+            }
+            return $content;
+        })
+        ->editColumn('order_nominal',function($d){
+            $content = "Rp. ". number_format($d->order_nominal);
+            return $content;
+        })
+        ->rawColumns(['action', 'status_order'])
+        ->make(true);
     
     }
 
-    public function read($id)
+    public function read(httpRequest $request,$id)
     {
-        
+        $book = $this->repository->findByField('order_id',$id);
+        if ($request->isMethod('post')) {
+            $book->order_driver_id = $request->assigned_for;
+            $book->save();
+
+            $driver = User::find($request->assigned_for);
+            $driver->isavail = 0;
+            $driver->save();
+
+            return redirect()->route('backend.dashboard.index');
+        }
+        $drivers = $this->repository->getDrivers();
+        return view('backend.booking.read')->with(['book'=>$book,'drivers'=>$drivers]);
     }
 
 }

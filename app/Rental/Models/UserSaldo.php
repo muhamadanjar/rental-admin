@@ -8,6 +8,7 @@ class UserSaldo extends Model
 {
     protected $table = 'm_user_saldo';
     protected $primaryKey = 'user_id';
+    public $timestamps = false;
 
     public function user()
     {

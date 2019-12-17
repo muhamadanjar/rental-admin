@@ -29,8 +29,10 @@
                     @foreach($data as $k => $v)
                     <tr>
                         
-                        <td>{{ $v->user }}</td>
-                        <td>{{ $v->req_saldo}}</td>
+                        <td>@isset($v->user)
+                            {{ $v->user->name }}
+                        @endisset  </td>
+                        <td>{{ number_format($v->req_saldo)}}</td>
                         <td>{{ $v->req_code}}</td>
                         <td>@if($v->req_file != 0)
                             <a class="fancybox" data-fancybox="fancybox" href="{{asset('files/uploads/bukti/'.$v->req_file)}}"><img src="{{asset('files/uploads/bukti/'.$v->req_file)}}" height="50px" width="50px" title="klik gambar untuk memperbesar" /></a>

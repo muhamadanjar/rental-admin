@@ -11,6 +11,22 @@
   <link rel="stylesheet" href="{{ asset('/css/adminlte.min.css')}}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <style type="text/css">
+  html { 
+      background: url({{ asset('img/bg.jpg') }}) no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+    .login-page{
+      background: transparent
+    }
+    .login-logo > a{
+      color: azure;
+    }
+
+  </style>
 @endsection
 
 @section('body-class','hold-transition login-page')
@@ -19,7 +35,7 @@
 @section('content')
 <div class="login-box">
     <div class="login-logo">
-      <a href="#"><b>Login</b>LTE</a>
+      <a href="#"><b>Rental</b>Admin</a>
     </div>
     <!-- /.login-logo -->
     <div class="card">

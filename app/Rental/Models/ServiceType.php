@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceType extends Model
 {
-    protected $table = 'service_type';
+    protected $table = 'sys_ms_service_type';
     protected $primarykey = 'id';
     public $timestamps = false;
 }

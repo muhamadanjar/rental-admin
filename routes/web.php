@@ -70,6 +70,9 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     Route::get('admin/booking/read/{id}',
         ['as' => 'admin-booking-view',
             'uses' => 'Backend\BookingCtrl@read',]);
+    Route::post('admin/booking/read/{id}',
+        ['as' => 'admin-booking-view',
+            'uses' => 'Backend\BookingCtrl@read',]);
 
 	// Route::resource('booking','BookingCtrl');
 	

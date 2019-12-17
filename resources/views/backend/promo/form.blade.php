@@ -70,11 +70,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="kode_promo">Batas Pemakaian</label>
-                                <input type="text" name="usage_limit" class="form-control" id="usage_limit" value="{{$usage_limit}}">
+                                <input type="number" name="usage_limit" class="form-control" id="usage_limit" value="{{$usage_limit}}">
                             </div>
                             <div class="form-group">
                                 <label for="kode_promo">Discount (%)</label>
-                                <input type="text" name="discount" class="form-control" id="discount" value="{{$discount}}">
+                                <input type="number" max="100" min="1" maxlength="1" name="discount" class="form-control" id="discount" value="{{$discount}}">
                             </div>
                             <div class="form-group">
                                 <label for="kode_promo">Deskripsi</label>
@@ -123,7 +123,7 @@
                                     <div class="input-group margin controlupload">
                                         <input type="text" class="form-control txtfoto" readonly="readonly" name="foto" value="{{ $image }}">
                                         <span class="input-group-btn">
-                                            <input type="file" name="users_file" class="hidden file fileupload" 
+                                            <input type="file" name="users_file" class="hidden d-none file fileupload" 
                                             data-url="{{ route('backend.promo.upload')}}" 
                                             data-type="single"
                                             data-path="{{ asset('/files/uploads/promo/')}}">
@@ -153,6 +153,7 @@
 @endsection
 @section('style-head')
 @parent
+<link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css')}}">
 
 @endsection
 @section('script-end')
@@ -161,17 +162,28 @@
 <script src="{{ asset('plugins/select2/js/select2.full.min.js')}}"></script>
 <script type="text/javascript" src="{{ url('/plugins/jquery-ui/js/jquery-ui.js')}}"></script>
 <script type="text/javascript" src="{{ url('/plugins/datatables/datatables.min.js')}}"></script>
+<!-- date-range-picker -->
+<script type="text/javascript" src="{{ asset('daterangepicker/daterangepicker.js')}}"></script>
+
 <script type="text/javascript">
     $(function () {
         //Initialize Select2 Elements
         $('.select2').select2();
         //Date picker
-        $('#tgl_mulai').datepicker({
-            autoclose: true
-        });
-        $('#tgl_akhir').datepicker({
-            autoclose: true
-        });
+        $('#tgl_mulai').daterangepicker({
+			singleDatePicker: true,
+    		showDropdowns: true,
+			locale: {
+				format: 'YYYY-MM-DD'
+			}
+		});
+        $('#tgl_akhir').daterangepicker({
+			singleDatePicker: true,
+    		showDropdowns: true,
+			locale: {
+				format: 'YYYY-MM-DD'
+			}
+		});
         $('#btn-generate').on('click',function(e){
             e.preventDefault();
             $('#kode_promo').val('<?php echo date('YmdHis') ?>');

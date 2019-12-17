@@ -49,3 +49,9 @@ Route::post('booking/{id}','Api\OrderCtrl@postUpdateOrder');
 //User
 Route::get('user/location','Api\UserCtrl@getUserLocation');
 Route::post('user/changestatus','Api\UserCtrl@postChangeStatusOnline');
+// User Meta
+Route::post('user/meta/update-status', 'Api\UserMetaCtrl@postStatusMeta');
+Route::post('user/meta/get-status', 'Api\UserMetaCtrl@getStatusMeta');
+Route::post('user/post/meta', 'Api\UserMetaCtrl@postMeta');
+Route::post('user/post/attachment', 'Api\UserMetaCtrl@postFilesMeta');
+Route::post('user/post/check-meta-value', 'Api\UserMetaCtrl@checkUserMeta');
