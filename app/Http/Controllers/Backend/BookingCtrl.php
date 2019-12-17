@@ -97,8 +97,7 @@ class BookingCtrl extends MainCtrl{
     
     }
 
-    public function read(httpRequest $request,$id)
-    {
+    public function read(httpRequest $request,$id){
         $book = $this->repository->findByField('order_id',$id);
         if ($request->isMethod('post')) {
             $book->order_driver_id = $request->assigned_for;
