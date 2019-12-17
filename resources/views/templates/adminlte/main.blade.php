@@ -82,6 +82,8 @@
 
     <!-- AdminLTE App -->
     <script src="{{ asset('js/adminlte.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="{{ asset('js/admin.js')}}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     {{-- <script src="{{ asset('js/pages/dashboard.js')}}"></script> --}}
     <!-- AdminLTE for demo purposes -->

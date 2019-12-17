@@ -100,6 +100,12 @@
                 <p>Trip</p>
             </a>
         </li>
+        <li class="nav-item">
+        <a href="{{ route('admin-booking') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Transaksi</p>
+            </a>
+        </li>
     </ul>
 </li>
 <li class="nav-item">
@@ -112,13 +118,13 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{{ route('report.pemesanan')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Pemesanan</p>
                 </a>
             </li>
         <li class="nav-item">
-        <a href="" class="nav-link">
+        <a href="{{route('report.customer')}}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Customer</p>
             </a>

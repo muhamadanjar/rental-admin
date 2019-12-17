@@ -9,6 +9,7 @@ use App\Setting;
 use App\Rental\Models\Promo;
 use App\Rental\Models\RentPackage;
 use App\Rental\Models\CarType;
+use App\Rental\Models\Review;
 class CommonCtrl extends Controller{
     protected $successStatus = 200;
     public function getTypeCar(Request $request){
@@ -78,5 +79,20 @@ class CommonCtrl extends Controller{
         }
         $a = $t->get();
         return response()->json(['status'=>true,'data'=>$a]);
+    }
+
+    public function postReview(Request $request){
+        $auth = $request->user('api');
+        if ($auth) {
+            Review::create([
+                'trip_code'=>$request->trip_code,
+                'user_id'=>$auth->id,
+                'driver_id'=>$request->driver_id,
+                'rate'=>$request->rate,
+                'description'=>$request->description,
+                'date' => Carbon::now()
+            ]);
+            return response()->json(array('message'=>'Review Berhasil ditambahkan'));
+        }
     }
 }

@@ -42,6 +42,8 @@ Route::get('bank/{id?}','Api\CommonCtrl@getBank');
 Route::get('services-type/{id?}','Api\CommonCtrl@getServiceType');
 Route::get('global-settings','Api\CommonCtrl@getSettings');
 
+Route::post('reviews','Api\CommonCtrl@postReview');
+
 //Order
 Route::post('booking','Api\OrderCtrl@postOrder');
 Route::post('booking/{id}','Api\OrderCtrl@postUpdateOrder');

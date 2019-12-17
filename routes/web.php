@@ -77,7 +77,10 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 	// Route::resource('booking','BookingCtrl');
 	
     Route::get('report/pemesanan','Backend\ReportCtrl@pemesanan')->name('report.pemesanan');
+    Route::post('report/pemesanan','Backend\ReportCtrl@pemesanan');
     Route::get('report/customer','Backend\ReportCtrl@customer')->name('report.customer');
+    Route::post('report/customer','Backend\ReportCtrl@customer');
+
     Route::get('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
     Route::post('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
 
