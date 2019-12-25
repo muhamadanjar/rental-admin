@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
 use App\Rental\Models\CarType;
+use App\Setting;
 class SettingCtrl extends BackendCtrl{
     public function general(){
-        return view('backend.setting.general');
+        $setting = Setting::pluck('setting_value', 'setting_key');
+        return view('backend.setting.general')->with('setting',$setting);
     }
     public function fare(Request $request){
         if ($request->isMethod('post')) {
@@ -25,7 +27,21 @@ class SettingCtrl extends BackendCtrl{
     }
 
     public function store(Request $request){
-        with(new Setting())->saveAll($request->all());
+        // with(new Setting())->saveAll($request->all());
+        foreach($request->all() as $key => $value){	
+            $checkExist = Setting::where('setting_key','=', $key)->first();
+			if($checkExist){
+				Setting::where('setting_key','=', $key)->update([
+					'setting_value'			=>	($value),
+					// 'updated_at'	=>	date('Y-m-d h:i:s')
+				]);
+			}else{
+				Setting::insertGetId([
+					'setting_value'			=>	($value),
+					'setting_key'			=>	str_slug($key),
+				]);				
+			}
+        }
         return redirect()->back()->with('flash.success', 'Konfigurasi berhasil diperbarui');
     }
 }
