@@ -1,6 +1,6 @@
 @extends('layouts.full')
 
-@section('body-class','hold-transition sidebar-mini layout-navbar-fixed layout-footer-fixed')
+@section('body-class','hold-transition sidebar-mini layout-navbar-fixed layout-footer-fixed text-sm')
     
 
 @section('style-head')
@@ -39,6 +39,7 @@
         <!-- /.content-header -->
 
         <section class="content">
+            @include('layouts.elements.alert')
             @yield('content-admin')
         </section>
 

@@ -53,9 +53,14 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     
     Route::get('driver','Backend\DriverCtrl@view')->name('driver');
     Route::get('driver/data','Backend\DriverCtrl@data')->name('driver-ajaxData');
+    Route::get('driver/{id}/detil','Backend\DriverCtrl@show')->name('driver-detail');
+    Route::post('driver/addsaldo','Backend\DriverCtrl@addsaldo')->name('driver.addsaldo');
 
     Route::get('customer','Backend\CustomerCtrl@view')->name('customer');
     Route::get('customer/data','Backend\CustomerCtrl@data')->name('customer-ajaxData');
+    Route::get('customer/{id}/edit','Backend\CustomerCtrl@edit')->name('backend.customer.edit');
+    Route::get('customer/{id}/view','Backend\CustomerCtrl@show')->name('backend.customer.show');
+    Route::delete('customer/{id}','Backend\CustomerCtrl@destroy')->name('backend.customer.destroy');
 
     Route::post('customer/addsaldo','Backend\CustomerCtrl@add_saldo')->name('customer.addsaldo');
     Route::get('customer/request_saldo','Backend\CustomerCtrl@request_saldo')->name('customer.request_saldo');
@@ -83,6 +88,7 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 
     Route::get('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
     Route::post('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
+    Route::post('setting','Backend\SettingCtrl@store')->name('backend.setting.store');
 
     Route::get('setting/fare','Backend\SettingCtrl@fare')->name('backend.setting.fare');
     Route::post('setting/fare','Backend\SettingCtrl@fare')->name('backend.setting.fare');

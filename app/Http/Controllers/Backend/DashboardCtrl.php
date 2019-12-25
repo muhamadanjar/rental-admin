@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use DB;
 use App\Rental\Models\Order;
+use App\Rental\Models\UserAnggota;
 class DashboardCtrl extends BackendCtrl{
     public function __construct(){
         parent::__construct();
@@ -12,11 +13,11 @@ class DashboardCtrl extends BackendCtrl{
     public function getIndex(Request $request){
         if($request->ajax()){}
         $countuser = DB::table('users')->count();
-        $totaldriver = DB::table('sys_tr_anggota')->where('is_anggota',1)->count();
-        $totalcustomer = DB::table('sys_tr_anggota')->where('is_anggota',2)->count();
+        $totaldriver = UserAnggota::where('is_anggota',1)->count();
+        $totalcustomer = UserAnggota::where('is_anggota',2)->count();
         $totalpemesanan = Order::count();
         
-        $orderList = Order::orderBy('order_tgl_pesanan','DESC')->paginate(10);
+        $orderList = Order::orderBy('order_tgl_pesanan','DESC')->orderBy('order_status','ASC')->paginate(10);
         return view('backend.dashboard.index')->with([
             'totaldriver'=>$totaldriver,
             'totalcustomer'=>$totalcustomer,

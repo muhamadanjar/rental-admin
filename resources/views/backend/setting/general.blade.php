@@ -4,11 +4,12 @@
     <div class="col-md-12">
       <div class="card card-success">
         <div class="card-header">
-          <h3 class="card-title">General Settings        </h3>
+          <h3 class="card-title">General Settings</h3>
         </div>
         <div class="card-body">
           
-          <form method="POST" action="https://f4.hyvikk.space/settings" accept-charset="UTF-8" enctype="multipart/form-data"><input name="_token" type="hidden" value="j4M88VyhnRYmEfNuvTbP3ptzUYs89cyAjQY9nxmc">
+          <form method="POST" enctype="multipart/form-data" action="{{ route('backend.setting.store') }}">
+            {{ csrf_field() }}
           <div class="row">
             <div class="form-group col-md-4">
               <label for="app_name" class="form-label">Website Name</label>
@@ -57,13 +58,13 @@
                                                                                                     <option value="Albanian-al"> Albanian </option>
                                                           
                 <option value="English-en" selected=""> English</option>
-                                                                        <option value="French-fr"> French </option>
-                                                                        <option value="German-de"> German </option>
-                                                                        <option value="Italian-it"> Italian </option>
-                                                                        <option value="Portuguese-pt"> Portuguese </option>
-                                                                        <option value="Spanish-es"> Spanish </option>
-                                                                        <option value="Traditional Chinese-zh"> Traditional Chinese </option>
-                                          </select>
+                <option value="French-fr"> French </option>
+                <option value="German-de"> German </option>
+                <option value="Italian-it"> Italian </option>
+                <option value="Portuguese-pt"> Portuguese </option>
+                <option value="Spanish-es"> Spanish </option>
+                <option value="Traditional Chinese-zh"> Traditional Chinese </option>
+              </select>
             </div>
   
             <div class="form-group col-md-4">

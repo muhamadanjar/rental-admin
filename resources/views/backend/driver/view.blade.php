@@ -2,7 +2,7 @@
 @section('content-admin')
     <div class="card card-default">
         <div class="card-header with-border">
-            <h3 class="card-title">Data Customer</h3>
+            <h3 class="card-title">Data Driver</h3>
             <div class="card-tools text-right">
                 <div class="btn-group">
                     {{-- <a href="{{ route('backend.promo.create') }}" class="btn btn-sm btn-primary"><span class="fa fa-plus"></span> Tambah</a> --}}
@@ -76,7 +76,7 @@
     </div>
 
 @endsection
-@section('title','Data Customer')
+@section('title','Data Driver')
 @section('style-head')
 @parent
 <link rel="stylesheet" href="{{ url('/plugins/datatables/datatables.min.css')}}">
@@ -105,7 +105,7 @@
 $(function(){
     var table = $("#table_data").DataTable({
         pageLength: '10',
-        ajax: '{!! route('customer-ajaxData') !!}',
+        ajax: '{!! route('driver-ajaxData') !!}',
         ordering: false,
         aoColumns: [
             { "mData": "name"},
@@ -133,7 +133,7 @@ $(function(){
             var userId = el.attr('data-userId');
             $('#formSaldo').find('#iRiderId').val(userId);
             $('#formSaldo')
-            .find('form').attr('action',"{{ route('customer.addsaldo') }}");
+            .find('form').attr('action',"{{ route('driver.addsaldo') }}");
             $('#formSaldo').modal('show');    
         }
         

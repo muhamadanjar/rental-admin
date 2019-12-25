@@ -4,10 +4,8 @@
 @section('breadcrumb')
 
 @endsection
-@section('body-class','skin-blue sidebar-mini fixed sidebar-mini-expand-feature')
+@section('body-class','skin-blue sidebar-mini fixed sidebar-mini-expand-feature text-sm')
 @section('content-admin')
-
-    <!-- Info boxes -->
     <div class="row">
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
@@ -57,8 +55,8 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-8">
-        <div class="card">
+      <div class="col-md-7">
+        <div class="card card-default color-palette-box">
           <div class="card-header">
             <h3 class="card-title">Peta Driver</h3>
           </div>
@@ -66,12 +64,41 @@
             <div id="map" class="map"></div>
           </div>
           <div class="card-footer">
+            <div class="row">
 
+              <div class="col-sm-4 col-md-2">
+                <h4 class="text-center">Aktif</h4>
+
+                <div class="color-palette-set">
+                  <div class="bg-primary color-palette"><span>#007bff</span></div>
+                  <div class="bg-primary disabled color-palette"><span class="span_actived">Disabled</span></div>
+                </div>
+              </div>
+              <!-- /.col -->
+              <div class="col-sm-4 col-md-2">
+                <h4 class="text-center">Ordered</h4>
+
+                <div class="color-palette-set">
+                  <div class="bg-secondary color-palette"><span>#6c757d</span></div>
+                  <div class="bg-secondary disabled color-palette"><span class="span_ordered">Disabled</span></div>
+                </div>
+              </div>
+              <!-- /.col -->
+              <div class="col-sm-4 col-md-2">
+                <h4 class="text-center">Unavailable</h4>
+
+                <div class="color-palette-set">
+                  <div class="bg-info color-palette"><span>#17a2b8</span></div>
+                  <div class="bg-info disabled color-palette"><span class="span_unavailable">Disabled</span></div>
+                </div>
+              </div>
+              
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="col-md-4">
+      <div class="col-md-5">
           <div class="card">
             <div class="card-header border-transparent">
               <h3 class="card-title">Latest Orders</h3>
@@ -107,7 +134,7 @@
                             @endisset
                           </td>
                           <td><span class="badge badge-success">{{$v->order_status}}</span></td>
-                          <td><span class="badge badge-info">{{$v->order_nominal}}</span></td>
+                          <td><span class="badge badge-info">{{ 'Rp.'.number_format($v->order_nominal,2,',','.')}}</span></td>
                       </tr>
                       @endforeach
                  
@@ -127,10 +154,6 @@
 
       
     </div>
-    
-    
-    
-
 @endsection
 @section('content')
 @parent
@@ -165,7 +188,7 @@
                   <div id="gridjenis"></div>
                 </div>
                 <div class="modal-footer">
-                {{-- <a href="{{ route('frontend.map') }}" class="btn btn-default"><span>Lihat Peta</span></a> --}}
+                  <a href="{{ route('backend.dashboard.index') }}" class="btn btn-default"><span>Lihat Peta</span></a>
                 </div>
             </div>
         </div>
@@ -181,6 +204,50 @@
 <link href="{{ asset('plugins/dx/css/dx.light.css')}}" rel="stylesheet">
 <link href="{{ asset('plugins/dx/css/dx.spa.css')}}" rel="stylesheet">
 
+<style>
+
+.color-palette {
+      height: 35px;
+      line-height: 35px;
+      text-align: right;
+      padding-right: .75rem;
+    }
+    
+    .color-palette.disabled {
+      text-align: center;
+      padding-right: 0;
+      display: block;
+    }
+    
+    .color-palette-set {
+      margin-bottom: 15px;
+    }
+
+    .color-palette span {
+      display: none;
+      font-size: 12px;
+    }
+
+    .color-palette:hover span {
+      display: block;
+    }
+
+    .color-palette.disabled span {
+      display: block;
+      text-align: left;
+      padding-left: .75rem;
+    }
+
+    .color-palette-box h4 {
+      position: absolute;
+      left: 1.25rem;
+      margin-top: .75rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      display: block;
+      z-index: 7;
+    }</style>
+
 
 @endsection
 @section('script-end')
@@ -191,20 +258,10 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <script>
-    let worker = null;
 		let vectorSource =null;
 		let vectorLayer = null;
 		$(function () {
-			worker = new Worker(`${Laravel.serverUrl}/js/webworker.js`);
-			worker.addEventListener('error', function(a) {
-					// console.log(a);
-					console.error('Error: Line ' + a.lineno + ' in ' + a.filename + ': ' + a.message);
-			}, false);
-
-			worker.addEventListener('message', function(a) {
-				if (a.data.cmd === 'resLastPosition') { resLastPosition(a.data.val); }
-        if (a.data.cmd === 'resLastNotif') { resLastNotif(a.data.val); }
-			});
+			
 			vectorSource = new ol.source.Vector();
       vectorLayer = new ol.layer.Vector({
             source: vectorSource,
@@ -243,56 +300,9 @@
 				
 				
 			});
-			function resLastPosition(a) {
-					a.map((v,i)=>{
-            let meta = v.meta;
-            let userData = v.users;
-            let mobilData = v.mobil;
-            meta.filter(function(word) {
-              if(word.meta_key == 'LOCATION'){
-                let split = word.meta_value.split(',');
-                var transform = ol.proj.getTransform('EPSG:4326', 'EPSG:3857');
-                let coordinate = transform([parseFloat(split[1]), parseFloat(split[0])]);
-                var mapFeature = {
-                  geometry: new ol.geom.Point(coordinate),
-                  name: userData.name
-                };
-                if (v.hasOwnProperty('mobil')) {
-                  mapFeature.mobil = mobilData[0];
-                }
-                // console.log(userData);
-                
-                var feature = new ol.Feature(mapFeature);
-                var iconStyle = new ol.style.Style({
-                    image: new ol.style.Icon(({
-                        anchor: [0.2, 32],
-                        
-                        scale: 0.3,
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'pixels',
-                        src: `${Laravel.serverUrl}/img/carMarker.png`
-                    }))
-                });
-                feature.setStyle(iconStyle);
-                vectorSource.addFeature(feature);
-              }
-              
-            })
-						
-					});
-				
-      }
-
-      function resLastNotif(a) {
-        console.log(a);
-        $('.notif_count').html(0);
-        $('.menu_header').html('Tidak ada Pemberitahuan');
-        a.map(function(v,i){
-
-        })
-      }
+			
       worker.postMessage({ cmd: 'reqLastPosition', val: `${Laravel.serverUrl}/api/user/location`});
-      worker.postMessage({ cmd: 'reqLastNotif', val: `${Laravel.serverUrl}/backend/user/notifikasi`});
+      
     });
 
     

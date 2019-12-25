@@ -4,18 +4,62 @@ namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request as httpRequest;
 use App\User;
-use App\UserProfile;
+use App\Rental\Models\UserSaldo;
 use DB;
 use Validator;
 use App\Http\Controllers\MainCtrl;
 use App\Rental\Contract\IAdministrasiUserRepository as currentRepo;
-
+use Yajra\DataTables\Facades\DataTables;
 use Laracasts\Flash\Flash;
 class DriverCtrl extends MainCtrl{
     private $roleName;
     public function __construct(httpRequest $request, currentRepo $repository){
         parent::__construct($request, $repository);
         $this->roleName = 'driver';
+        $this->params = array('index'=>'driver');
+    }
+
+
+    public function view()
+    {
+        return view('backend.driver.view');
+    }
+
+    public function data(){
+        $buffer = $this->repository->getUserData('driver');
+		return Datatables::of($buffer)
+		->addColumn('status',function($e){
+			return $e->isactived == 1 ? '<i class="fa fa-check text-green"/>':'<i class="fas fa-times text-red"></i>';
+		})
+		->addColumn('saldo',function($e){
+			$saldo = 0;
+			if (isset($e->saldo)) {
+				$saldo = $e->saldo->saldo;
+			}else{
+				$saldo = '0';
+			}
+			return 'Rp '. number_format($saldo,2,',',".");
+
+		})
+        ->addColumn('action', function ($v) {
+			$content = '<div class="input-group-prepend">';
+			$content .=	'<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i></button>';
+			$content .=	'<div class="dropdown-menu">';
+			$content .= 		'<a class="dropdown-item" href="'.route('backend.customer.edit',[$v->id]).'">Edit</a>';
+			$content .= 		'<a class="dropdown-item" href="#">Hapus</a>';
+			$content .= '<form action="'.route('backend.customer.destroy', array($v->id) ).'" method="post" style="display:none" id="frmaktif-'.$v->id.'">';
+			$content .= '	<input type="hidden" name="_method" value="delete">';
+			$content .= csrf_field();
+			$content .= '</form>';
+			$content .= 		'<div class="dropdown-divider"></div>';
+            $content .= 		'<a data-userId="'.$v->id.'" class="dropdown-item" href="'.route('driver-detail',[$v->id]).'">Detil User</a>';
+            $content .= 		'<a data-userId="'.$v->id.'" class="dropdown-item formConfirmSaldo" href="#">Isi Saldo</a>';
+			$content .= 	'</div>';
+			$content .= '</div>';
+            return $content;
+		})
+		->rawColumns(['action','status','saldo'])
+            ->make(true);
     }
     public function index(){
         $role = Role::where('name',$this->roleName)->first();
@@ -28,15 +72,16 @@ class DriverCtrl extends MainCtrl{
         # code...
     }
 
-    public function show(Request $request,$id){
-        $a = DB::table('tm_driver')->join('mobil','tm_driver.id','mobil.user_id')->where('tm_driver.id',$id)->first();
+    public function show(httpRequest $request,$id){
+        $a = User::find($id)->where('isanggota',1)->first();
+        // $a = DB::table('tm_driver')->join('mobil','tm_driver.id','mobil.user_id')->where('tm_driver.id',$id)->first();
         // $a->foto = auth()->user()->getPermalink().$a->foto;
         
         if($request->ajax()){
             if($a === NULL){ return response()->json(array('message'=>'Driver tidak di temukan'));}
             return response()->json(array('data'=>$a));
         }
-        return view('backend.driver.show')->with(['driver'=>$a]);
+        return view('backend.driver.show')->with(['item'=>$a]);
         
     }
 
@@ -69,22 +114,27 @@ class DriverCtrl extends MainCtrl{
         return redirect()->route('backend.driver.index');
     }
 
-    public function add_saldo(Request $request){
-        $c = UserProfile::where('user_id',$request->user_id)->first();
-        $c = ($c === NULL) ? new UserProfile():$c;
-        $c->user_id = $request->user_id;
-		$c->wallet += $request->wallet;
+    public function addsaldo(httpRequest $request){
+		$userId = $request->user_id;
+		$c = UserSaldo::where('user_id',$request->user_id)->first();
+		if ($c == NULL) $c = new UserSaldo();
+		$user = User::find($userId);
+		if(!$user->isactived){
+			Flash::info('User tidak aktif');
+			return redirect()->route($this->params['index']);	
+		}
+		$c->user_id = $request->user_id;
+		$c->saldo += $request->wallet;
 		$c->save();
-		
 		Flash::success('Saldo Berhasil di tambahkan');
-		return redirect()->route('backend.driver.index');
+		return redirect()->route($this->params['index']);
 
 	}
 
     public function post(Request $request){
         $validator = Validator::make($request->all(),Mobil::$rules_driver,Mobil::$messages_driver);
         if(!$validator->passes()) {
-		    return redirect()->route('backend.driver.index')
+		    return redirect()->route($this->params['index'])
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -134,7 +184,7 @@ class DriverCtrl extends MainCtrl{
                 Flash::success(trans('flash/mobil.drivercreated'));
                 \DB::commit();
 
-                return redirect()->route('backend.driver.index');
+                return redirect()->route($this->params['index']);
             
 
             

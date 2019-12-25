@@ -47,6 +47,13 @@ Route::post('reviews','Api\CommonCtrl@postReview');
 //Order
 Route::post('booking','Api\OrderCtrl@postOrder');
 Route::post('booking/{id}','Api\OrderCtrl@postUpdateOrder');
+Route::post('topup/saldo','Api\OrderCtrl@postTopUpSaldo');
+Route::post('topup/bukti','Api\OrderCtrl@postUploadBukti');
+Route::post('booking/history','Api\OrderCtrl@getHistoryOrderByUser');
+
+
+
+
 
 //User
 Route::get('user/location','Api\UserCtrl@getUserLocation');

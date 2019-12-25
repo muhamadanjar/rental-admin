@@ -3,17 +3,28 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use DB;
 use App\Http\Controllers\Controller;
 use App\Rental\Models\Order;
 use App\Rental\Models\ReqSaldo;
-use App\User;
 use App\Rental\Models\User as UserAdmin;
+use App\Rental\Models\Notification;
+use App\User;
 use Carbon\Carbon;
 class OrderCtrl extends Controller{
     public function postOrder(Request $request){
         $auth = auth('api')->user();
         try {
+
+            if (!$auth) {
+                return response()->json(array('message'=>trans('auth.not_found')));
+            }
+
+            if ($auth->isavail > 1) {
+                return response()->json(array('message'=>trans('order.intransaction')));
+            }
             DB::beginTransaction();
+            $noRef = substr(number_format(time() * rand(),0,'',''),0,10);
             $orderCode = substr(number_format(time() * rand(),0,'',''),0,10);
             $model = new Order();
             $model->order_code = $orderCode;
@@ -22,28 +33,34 @@ class OrderCtrl extends Controller{
             $model->order_address_origin_lat = $request->order_address_origin_lat;
             $model->order_address_origin_lng = $request->order_address_origin_lng;
 
-            $model->destination_address_origin = $request->destination_address_origin;
-            $model->destination_address_origin_lat = $request->destination_address_origin_lat;
-            $model->destination_address_origin_lng = $request->destination_address_origin_lng;
+            $model->order_address_destination = $request->order_address_destination;
+            $model->order_address_destination_lat = $request->order_address_destination_lat;
+            $model->order_address_destination_lng = $request->order_address_destination_lng;
 
             $model->order_jenis = $request->order_jenis;
             $model->order_nominal = $request->order_nominal;
             $model->order_tgl_pesanan = Carbon::now();
             $model->order_keterangan = $request->order_keterangan;
-            $model->order_status = 1;
+            $model->order_status = 0;
             $exec = $model->save();
-            DB::commit();
+
             if ($exec) {
+                User::where('id',$auth->id)->update(['isavail'=>2]);
                 $admin = UserAdmin::first();
+                $message = 'Ada Pemesanan Baru';
                 $this->set_notification($message,$admin->id_user);
+                return response()->json(array('message'=>trans('order.success')));
             }
 
             if(!$exec){
                 DB::rollBack();
                 return response()->json(['status'=>'error', 'message'=>'Error Accoured', 'code'=>404]);
             }
+            DB::commit();
+            
         } catch (\Throwable $th) {
-            //throw $th;
+            DB::rollBack();
+            return response()->json(['status'=>false,'message'=>$th->getMessage()]);
         }
     }
 
@@ -204,12 +221,20 @@ class OrderCtrl extends Controller{
     }
 
 
-    private function set_notification($message, $user_id) {
-        $insert['notif_date'] = date('Y-m-d H:i:s');
-        $insert['notif_from'] = 'USER';
-        $insert['message']    = $message;
-        $insert['status']     = 0;
-        $insert['user_id']    = $user_id;
-        Notification::create($insert);
+    public function set_notification($message, $user_id) {
+        try {
+            $insert['notif_date'] = date('Y-m-d H:i:s');
+            $insert['notif_from'] = 'USER';
+            $insert['message']    = $message;
+            $insert['status']     = 0;
+            $insert['user_id']    = $user_id;
+            $notif = Notification::insert($insert);
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage());
+        }
+        
+        // dd($notif);
+
+
     }
 }

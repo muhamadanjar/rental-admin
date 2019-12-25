@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use File;
 class Promo extends Model
 {
-    protected $table = 'promo';
+    protected $table = 'sys_ms_promo';
     protected $primaryKey = 'id';
     protected $dates = ['tgl_mulai','tgl_akhir'];
 

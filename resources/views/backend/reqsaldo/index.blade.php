@@ -12,7 +12,7 @@
         </div>
             <!-- /.card-header -->
         <div class="card-body">
-        	<table class="display table" cellspacing="0" width="100%" id="table_promo">
+        	<table class="display table" cellspacing="0" width="100%" id="table_data">
                 <thead>
                     <tr>
                         
@@ -28,11 +28,10 @@
                 <tbody>
                     @foreach($data as $k => $v)
                     <tr>
-                        
                         <td>@isset($v->user)
                             {{ $v->user->name }}
                         @endisset  </td>
-                        <td>{{ number_format($v->req_saldo)}}</td>
+                        <td>{{ 'Rp '. number_format($v->req_saldo,2,',','.')}}</td>
                         <td>{{ $v->req_code}}</td>
                         <td>@if($v->req_file != 0)
                             <a class="fancybox" data-fancybox="fancybox" href="{{asset('files/uploads/bukti/'.$v->req_file)}}"><img src="{{asset('files/uploads/bukti/'.$v->req_file)}}" height="50px" width="50px" title="klik gambar untuk memperbesar" /></a>
@@ -75,23 +74,26 @@
 @section('style-head')
 @parent
 <link rel="stylesheet" href="{{ url('/plugins/datatables/datatables.min.css')}}">
+<link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{url('/plugins/fancybox/source/jquery.fancybox.css?v=2.1.7')}}" type="text/css" media="screen" />
 
 @endsection
 @section('script-end')
 @parent
-<script type="text/javascript" src="{{url('/plugins/fancybox/source/jquery.fancybox.pack.js?v=2.1.7')}}"></script>
-<script type="text/javascript" src="{{ url('/plugins/jquery-ui/js/jquery-ui.js')}}"></script>
-
-<script type="text/javascript" src="{{ url('/plugins/datatables/datatables.min.js')}}"></script>
+{{-- <script type="text/javascript" src="{{ asset('/plugins/fancybox/source/jquery.fancybox.pack.js?v=2.1.7')}}"></script> --}}
+<script type="text/javascript" src="{{ asset('plugins/datatables/jquery.dataTables.js')}}"></script>
+<script type="text/javascript" src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 
 
 <script src="{{ asset('/js/rm.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $(".fancybox").fancybox();
+        // $(".fancybox").fancybox();
         $(".desctooltips").tooltip();
+        $('#table_data').dataTable({
+
+        });
     });
 </script>
 @endsection

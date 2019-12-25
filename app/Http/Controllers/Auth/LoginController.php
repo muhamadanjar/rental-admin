@@ -43,14 +43,26 @@ class LoginController extends Controller
         $pass = $request->password;
 
         if (Auth::attempt(['username' => $username, 'password' => $pass])) {
+
             $buffer = Auth::user();
-            if($buffer->status==1){
-                return response()->json(array('status' => 1, 'message' => trans('auth.success')));
+            if ($request->ajax()) {
+                if($buffer->status==1){
+                    return response()->json(array('status' => 1, 'message' => trans('auth.success')));
+                }else{
+                    Auth::logout();
+                    \Session::flush();
+                    return response()->json(array('status' => 0, 'message' => trans('auth.user_allready_login')));
+                }
             }else{
-                Auth::logout();
-                \Session::flush();
-                return response()->json(array('status' => 0, 'message' => trans('auth.user_allready_login')));
+                if($buffer->status==1){
+                    return response()->redirectToRoute('backend.dashboard.index');
+                }else{
+                    Auth::logout();
+                    \Session::flush();
+                    return response()->redirectToRoute('backend.dashboard.index');
+                }
             }
+            
         }else {
             return response()->json(array('status' => 0, 'message' => trans('auth.failed')));
         }

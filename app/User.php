@@ -12,9 +12,9 @@ class User extends Authenticatable{
     use Notifiable,HasApiTokens;
     public $timestamps = true;
     protected $table = 'users';
-    protected $fillable = [
-        'username','name', 'email', 'password',
-    ];
+    // protected $fillable = [
+    //     'username','name', 'email', 'password','isavail',
+    // ];
     protected $hidden = [
         'password', 'remember_token',
     ];
