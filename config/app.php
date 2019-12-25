@@ -108,6 +108,9 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'user_customer'=>1,
+    'user_driver'=>2,
+
     /*
     |--------------------------------------------------------------------------
     | Logging Configuration

@@ -4,6 +4,7 @@ use App\Rental\Contract\IOrderRepository as cInterface;
 use App\Rental\EloquentRepository as BaseInterface;
 use App\Rental\Models\Order;
 use App\User;
+use Config;
 class OrderRepository extends BaseInterface implements cInterface
 {
     protected $parent;
@@ -18,6 +19,6 @@ class OrderRepository extends BaseInterface implements cInterface
     }
 
     public function getDrivers(){
-        return User::where('isavail',1)->where('isanggota',1)->get();
+        return User::where('isavail',1)->whereIsanggota(Config::get('app.user_driver'))->get();
     }
 }

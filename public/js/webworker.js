@@ -3,13 +3,13 @@ let timeReqLastPosition;
 let timeReqLastNotif;
 function reqLastPosition(address){
 	ajax(address, null, 'GET', function(c) {
-		self.postMessage({ cmd: 'resLastPosition', val: c.data });
+		self.postMessage({ cmd: 'resLastPosition', val: c });
 		timeReqLastPosition = setTimeout(function() { reqLastPosition(address); }, 30000);
 	});
 }
 function reqLastNotif(address){
 	ajax(address, null, 'GET', function(c) {
-		self.postMessage({ cmd: 'resLastNotif', val: c.data });
+		self.postMessage({ cmd: 'resLastNotif', val: c });
 		timeReqLastNotif = setTimeout(function() { reqLastPosition(address); }, 30000);
 	});
 }

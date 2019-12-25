@@ -46,7 +46,11 @@ class AuthCtrl extends Controller{
                 $user = $request->user('users');
                 $tokenResult = $user->createToken('Personal Access Token');
                 $token = $tokenResult->token;
-                
+                // dd($user);
+                if ($user->isanggota === 2) {
+                    // $user->update(['isavail'=>1]);
+                    User::whereId($user->id)->update(['isavail'=>1]);
+                }
                 if ($request->remember_me)
                     $token->expires_at = Carbon::now()->addWeeks(1);        
                     $token->save();        

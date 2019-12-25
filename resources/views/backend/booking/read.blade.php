@@ -60,8 +60,8 @@
     <script type="text/javascript">
         var originLat = '{{$book->order_address_origin_lat}}';
         var originLng = '{{$book->order_address_origin_lng}}';
-        var destinationLat = '{{$book->order_address_destiantion_lat}}';
-        var destinationLng = '{{$book->order_address_destiantion_lng}}';
+        var destinationLat = '{{$book->order_address_destination_lat}}';
+        var destinationLng = '{{$book->order_address_destination_lng}}';
         var map = new ol.Map({
             target: 'map',
             layers: [
@@ -98,8 +98,9 @@
             }))
         });
         markerOrigin.setStyle(iconStyle);
+        markerDestination.setStyle(iconStyle);
         var vectorSource = new ol.source.Vector({
-            features: [markerOrigin]
+            features: [markerOrigin,markerDestination]
         });
         markerVectorLayer = new ol.layer.Vector({
             source: vectorSource,

@@ -98,6 +98,8 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 
     Route::group(['prefix'=>'backend','namespace'=>'Backend','as'=>'backend.'],function(){
         Route::get('user/notifikasi','BackendCtrl@getNotificationByUser');
+        Route::get('user/location','BackendCtrl@getUserLocation');
+        
         
 
 

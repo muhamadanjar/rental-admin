@@ -301,7 +301,7 @@
 				
 			});
 			
-      worker.postMessage({ cmd: 'reqLastPosition', val: `${Laravel.serverUrl}/api/user/location`});
+      worker.postMessage({ cmd: 'reqLastPosition', val: `${Laravel.serverUrl}/backend/user/location`});
       
     });
 

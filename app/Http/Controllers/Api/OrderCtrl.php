@@ -11,11 +11,12 @@ use App\Rental\Models\User as UserAdmin;
 use App\Rental\Models\Notification;
 use App\User;
 use Carbon\Carbon;
+use Config;
 class OrderCtrl extends Controller{
     public function postOrder(Request $request){
         $auth = auth('api')->user();
         try {
-
+            
             if (!$auth) {
                 return response()->json(array('message'=>trans('auth.not_found')));
             }
@@ -43,20 +44,20 @@ class OrderCtrl extends Controller{
             $model->order_keterangan = $request->order_keterangan;
             $model->order_status = 0;
             $exec = $model->save();
-
             if ($exec) {
                 User::where('id',$auth->id)->update(['isavail'=>2]);
                 $admin = UserAdmin::first();
                 $message = 'Ada Pemesanan Baru';
-                $this->set_notification($message,$admin->id_user);
-                return response()->json(array('message'=>trans('order.success')));
+                $this->set_notification($message,$admin->id_user);    
             }
 
             if(!$exec){
                 DB::rollBack();
                 return response()->json(['status'=>'error', 'message'=>'Error Accoured', 'code'=>404]);
             }
+            
             DB::commit();
+            return response()->json(array('message'=>trans('order.success')));
             
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -67,7 +68,17 @@ class OrderCtrl extends Controller{
     public function postUpdateOrder(Request $request){
         try {
             $t = Order::find($request->order_id);
-            if ($t == NULL) { return response()->json(['status'=>false,'message'=>'Data Trip tidak di temukan']);}
+            $auth = $request->user('api');
+            if ($t == NULL) { return response()->json(['status'=>false,'message'=>trans('not_found')]); }
+            if ($t->order_status > $request->status) {
+                return response()->json(['message'=>'status tidak bisa di ulang']);
+            }
+            if($auth->isanggota != Config::get('app.user_driver')){
+                return response()->json(['message'=>trans('order.not_driver')]);
+            }
+            if ($t->order_driver_id != $auth->id) {
+                return response()->json(['message'=>trans('order.not_allowed')]);
+            }
             $t->order_status = $request->status;
             $t->save();
             if ($request->status == 6) {
@@ -75,7 +86,7 @@ class OrderCtrl extends Controller{
                 $user->isavail = 1;
                 $user->save();
             }
-            return response()->json(['status'=>true,'message'=>'Status Trip {$t->order_code}']);
+            return response()->json(['status'=>true,'message'=>"Status Trip {$t->order_code}"]);
         } catch (\Throwable $th) {
             return response()->json(['status'=>false,'message'=>$th->getMessage()]);
         }
@@ -228,6 +239,7 @@ class OrderCtrl extends Controller{
             $insert['message']    = $message;
             $insert['status']     = 0;
             $insert['user_id']    = $user_id;
+            $insert['jenis']    = 'ORDER';
             $notif = Notification::insert($insert);
         } catch (\Throwable $th) {
             return response()->json($th->getMessage());

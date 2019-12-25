@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Rental\Models\Order;
 use App\Rental\Models\UserAnggota;
+// use App\AuditTrail\Activity\IActivity as activityRepo;
 class DashboardCtrl extends BackendCtrl{
     public function __construct(){
         parent::__construct();
@@ -16,6 +17,8 @@ class DashboardCtrl extends BackendCtrl{
         $totaldriver = UserAnggota::where('is_anggota',1)->count();
         $totalcustomer = UserAnggota::where('is_anggota',2)->count();
         $totalpemesanan = Order::count();
+        // $datastatistik = $this->activity->statistikPengunjung();
+        // $totalpengunjung = $this->activity->totalhits();
         
         $orderList = Order::orderBy('order_tgl_pesanan','DESC')->orderBy('order_status','ASC')->paginate(10);
         return view('backend.dashboard.index')->with([

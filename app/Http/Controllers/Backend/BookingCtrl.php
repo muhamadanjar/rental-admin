@@ -23,10 +23,9 @@ class BookingCtrl extends MainCtrl{
         parent::__construct($request, $repository);
         $this->param = array(
             'view' =>"backend.booking.view",
-            'view_man' => "booking.man",
-            'view_contact'  => "booking.contact_person",
-            'view_show' => "booking.show",
+            'view_show' => "backend.booking.read",
         );
+        $this->route = array('index'=>'backend.dashboard.index');
     }
 
     public function view(){
@@ -42,7 +41,7 @@ class BookingCtrl extends MainCtrl{
                 'subtitle'   => '',
             );
 
-            $html = \view(\Config::get('consyst.view_moduls') . $this->param['view'], array('pages' => $pages,'status'=>1))->render();
+            $html = \view(\Config::get('rental.view_moduls') . $this->param['view'], array('pages' => $pages,'status'=>1))->render();
             return \Response::view($this->param['view']);
         // } else {
         //     return \Response::view('errors.401');
@@ -107,10 +106,10 @@ class BookingCtrl extends MainCtrl{
             $driver->isavail = 0;
             $driver->save();
 
-            return redirect()->route('backend.dashboard.index');
+            return redirect()->route($this->route['index']);
         }
         $drivers = $this->repository->getDrivers();
-        return view('backend.booking.read')->with(['book'=>$book,'drivers'=>$drivers]);
+        return view($this->param['view_show'])->with(['book'=>$book,'drivers'=>$drivers]);
     }
 
 }
