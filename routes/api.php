@@ -52,9 +52,6 @@ Route::post('topup/bukti','Api\OrderCtrl@postUploadBukti');
 Route::post('booking/history','Api\OrderCtrl@getHistoryOrderByUser');
 
 
-
-
-
 //User
 Route::get('user/location','Api\UserCtrl@getUserLocation');
 Route::post('user/changestatus','Api\UserCtrl@postChangeStatusOnline');

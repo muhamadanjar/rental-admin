@@ -20,9 +20,9 @@ class AdministrasiUserRepository extends BaseInterface implements cInterface{
 
     public function getUserData($type='customer'){
         if ($type == 'customer') {
-            $data = User::where('isanggota',2)->get();
+            $data = User::where('isanggota',Config::get('app.user_customer'))->get();
         }else{
-            $data = User::where('isanggota',1)->get();
+            $data = User::where('isanggota',Config::get('app.user_driver'))->get();
         }
             
         return $data;

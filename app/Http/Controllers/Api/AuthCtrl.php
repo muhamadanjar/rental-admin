@@ -40,7 +40,7 @@ class AuthCtrl extends Controller{
         };
         try {
             $credentials = request(['email', 'password']);
-            if(Auth::guard('users')->attempt($credentials,false,false)){
+            if(Auth::guard('users')->attempt($credentials)){
                 // $user = Auth::guard('users')->user();
                 // $success['token'] = $user->createToken('MyApp')->accessToken;
                 $user = $request->user('users');

@@ -14,7 +14,7 @@
           <div class="row">
             <div class="form-group col-md-4">
               <label for="app_name" class="form-label">Website Name</label>
-              <input class="form-control" required="" name="app_name" type="text" value="{{ array_get($setting, 'app_name', '') }}">
+              <input class="form-control" required="" name="app-name" type="text" value="{{ array_get($setting, 'app_name', '') }}">
             </div>
   
             <div class="form-group col-md-4">

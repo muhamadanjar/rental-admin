@@ -54,6 +54,15 @@
     <link rel="stylesheet" href="https://unpkg.com/ol-popup@4.0.0/src/ol-popup.css" />	
 @endsection
 
+@section('style-theme')
+@parent
+    <style>
+        #map{
+            height: 400px;
+        }
+    </style>
+@endsection
+
 @section('script-end')
     @parent
     <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
