@@ -57,11 +57,13 @@ class AuthCtrl extends Controller{
                 return response()->json([
                     'access_token' => $tokenResult->accessToken,
                     'token_type' => 'Bearer',
+                    'data'=>$user,
                     'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
                 ],200);
                 
             }else{
                 return response()->json([
+                    'message_code' => 'INVALID_PASSWORD',
                     'message' => trans('auth.failed')
                 ], 401);
             }
@@ -75,13 +77,20 @@ class AuthCtrl extends Controller{
     }
   
     public function logout(Request $request){
-        $request->user()->token()->revoke();        
-        return response()->json([
-            'message' => trans('auth.logout')
-        ]);
+        try {
+            User::find($request->user('api')->id)->update(['isavail'=>0]);
+            $request->user('api')->token()->revoke();
+            return response()->json([
+                'message' => trans('auth.logout')
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        
     }
   
     public function user(Request $request){
-        return response()->json($request->user());
+        $user = $request->user();
+        return response()->json(['status'=>true,'data'=>$user]);
     }
 }

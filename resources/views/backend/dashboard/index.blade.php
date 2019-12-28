@@ -145,8 +145,8 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer clearfix">
-              <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Place New Order</a>
-              <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
+              <a href="{{route('admin-booking')}}" class="btn btn-sm btn-info float-left">Place New Order</a>
+              <a href="{{route('admin-booking')}}" class="btn btn-sm btn-secondary float-right">View All Orders</a>
             </div>
             <!-- /.card-footer -->
           </div>

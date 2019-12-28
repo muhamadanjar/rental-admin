@@ -3,9 +3,12 @@ namespace App\Rental\Repository\AdministrasiUser;
 use App\Rental\Contract\IAdministrasiUserRepository as cInterface;
 use App\Rental\EloquentRepository as BaseInterface;
 use App\User;
+use App\User as UserMobile;
 use App\Rental\Models\UserMeta;
+use App\Rental\Models\UserAnggota;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
+use Config;
 class AdministrasiUserRepository extends BaseInterface implements cInterface{
     protected $parent;
     public function __construct(){
@@ -138,7 +141,7 @@ class AdministrasiUserRepository extends BaseInterface implements cInterface{
             if ($row['meta_key'] == 'DOKUMEN_PRIBADI') 
             {
                 $filename   = $row['meta_value'];
-                $baseurl    = '/var/www/html/pikoapi/public/images/users/'.$filename;
+                $baseurl    = public_path('/storage/users/').$filename;
                 if (file_exists($baseurl)) {
                     $rm  = unlink($baseurl);
                         if (!$rm) return false;

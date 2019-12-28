@@ -4,12 +4,24 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-class UserMetaCtrl extends Controller
-{
+use Validator;
+use App\Rental\Models\UserMeta;
+use App\User;
+use Carbon\Carbon;
+class UserMetaCtrl extends ApiCtrl
+{	
+	private $auth;
+	public function __construct(Request $request){
+		parent::__construct();
+		$this->auth = $request->user('api');
+		
+	}
+
+
     public function postMeta(Request $request)
     {
     	if($request->user('api') !== NULL)  {
-
+			
 			$messages = [
 				'required' => 'The :attribute field is required.',
 			];
@@ -28,7 +40,7 @@ class UserMetaCtrl extends Controller
 			for ($i=0; $i<$count; $i++){
 				
 		    	UserMeta::where('meta_key', $request->meta_key[$i])
-		    		->where('meta_users', $this->auth->getResourceOwnerID())
+		    		->where('meta_users', $this->auth->id)
 		    		->where('meta_key', '!=', 'DOKUMEN_PRIBADI')
 	    		->delete();
 				
@@ -44,7 +56,7 @@ class UserMetaCtrl extends Controller
 				array_push($meta_users, array(
 					'meta_key' 	 	=> $request->meta_key[$i],
 					'meta_value' 	=> $request->meta_value[$i],
-					'meta_users' 	=> $this->auth->getResourceOwnerID(),
+					'meta_users' 	=> $this->auth->id,
 					'created_at' 	=> Carbon::now(),
 					'updated_at' 	=> Carbon::now()
 				));
@@ -182,7 +194,7 @@ class UserMetaCtrl extends Controller
 			return response()->json(['status'=>'success', 'message'=> false, 'code'=>200]);
 		}
 
-		$exec = User::where("id", $this->auth->getResourceOwnerID())->update([ $field => $request->value]);
+		$exec = User::where("id", $this->auth->id)->update([ $field => $request->value]);
 		if(!$exec) {
 			return response()->json(['status'=>'success', 'message'=> false, 'code'=>200]);
 		}

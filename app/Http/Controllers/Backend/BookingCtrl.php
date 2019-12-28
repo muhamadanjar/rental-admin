@@ -99,13 +99,17 @@ class BookingCtrl extends MainCtrl{
     public function read(httpRequest $request,$id){
         $book = $this->repository->findByField('order_id',$id);
         if ($request->isMethod('post')) {
-            $book->order_driver_id = $request->assigned_for;
-            $book->save();
-
             $driver = User::find($request->assigned_for);
-            $driver->isavail = 0;
-            $driver->save();
-
+            $check = $this->repository->findByField('order_driver_id',$driver->id)->findWhere('order_status','<',4)->findWhere('order_status','>',0);
+            if ($driver->isavail > 1 || $check != NULL) {
+                Flash::error("Ada Transaksi yang belum beres");
+            }else{
+                $book->order_driver_id = $request->assigned_for;
+                $book->save();
+                $driver->isavail = 2;
+                $driver->save();
+            }
+            
             return redirect()->route($this->route['index']);
         }
         $drivers = $this->repository->getDrivers();
