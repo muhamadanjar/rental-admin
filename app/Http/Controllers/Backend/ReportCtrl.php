@@ -13,4 +13,9 @@ class ReportCtrl extends BackendCtrl
     public function customer(Request $request){
         return view('backend.report.customer');
     }
+
+    public function disbursment(Request $request)
+    {
+        dd($request);
+    }
 }

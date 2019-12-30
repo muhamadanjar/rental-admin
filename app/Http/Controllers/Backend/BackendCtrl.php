@@ -9,10 +9,14 @@ use App\User;
 use App\User as UserMobile;
 use Carbon\Carbon;
 use App\Rental\Models\Notification;
+use Config;
 class BackendCtrl extends Controller
 {
     public function __construct(){
         Auth::user();
+
+        $this->ud = Config::get('app.user_driver');
+        $this->uc = Config::get('app.user_customer');
     }
 
     public function getNotificationByUser(){
@@ -33,9 +37,9 @@ class BackendCtrl extends Controller
     public function getUserLocation(){
         $data  = array();
         $ul = UserMobile::orderBy('id')->where('isanggota',2)->get();
-        $countAktif = UserMobile::orderBy('id')->where('isanggota',2)->where('isavail',1)->count();
-        $countOrdered = UserMobile::orderBy('id')->where('isanggota',2)->where('isavail',2)->count();
-        $countOffline = UserMobile::orderBy('id')->where('isanggota',2)->where('isavail',0)->count();
+        $countAktif = UserMobile::orderBy('id')->where('isanggota',$this->ud)->where('isavail',1)->count();
+        $countOrdered = UserMobile::orderBy('id')->where('isanggota',$this->ud)->where('isavail',2)->count();
+        $countOffline = UserMobile::orderBy('id')->where('isanggota',$this->ud)->where('isavail',0)->count();
         $countUser = array($countAktif,$countOrdered,$countOffline);
         foreach ($ul as $k => $v) {
             $data[$k]['users'] = $v;
@@ -43,5 +47,9 @@ class BackendCtrl extends Controller
             $data[$k]['mobil'] = $v->mobil;
         }
         return response()->json(['status'=>true,'data'=>$data,'count'=>$countUser],200);
+    }
+
+    public function search(Request $request){
+        dd($request);
     }
 }

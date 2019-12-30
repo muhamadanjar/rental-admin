@@ -37,11 +37,7 @@ Route::post('register/validate-pin','Api\DaftarAnggotaCtrl@ValidatePIN');
 Route::post('register/check-pin-{pin}','Api\DaftarAnggotaCtrl@checkPin');
 Route::post('register/update-data','Api\DaftarAnggotaCtrl@updateData');
 Route::post('register/get-status','Api\DaftarAnggotaCtrl@getStatus');
-
-
-
 //Common
-
 Route::get('car-types/{id?}','Api\CommonCtrl@getTypeCar');
 Route::get('packages/{id?}','Api\CommonCtrl@getRentPackage');
 Route::get('promo/{id?}','Api\CommonCtrl@getPromo');
@@ -59,6 +55,8 @@ Route::post('topup/bukti','Api\OrderCtrl@postUploadBukti');
 Route::post('booking/history','Api\OrderCtrl@getHistoryOrderByUser');
 
 
+
+
 //User
 Route::get('user/location','Api\UserCtrl@getUserLocation');
 Route::post('user/changestatus','Api\UserCtrl@postChangeStatusOnline');
@@ -70,16 +68,17 @@ Route::post('user/post/meta', 'Api\UserMetaCtrl@postMeta');
 Route::post('user/post/attachment', 'Api\UserMetaCtrl@postFilesMeta');
 Route::post('user/post/check-meta-value', 'Api\UserMetaCtrl@checkUserMeta');
 
-$app->post('/users/email/setup', 'UserController@ChangeEmail');
-$app->post('/users/email/verification', 'UserController@GenerateEmailVerification');
-$app->get('/users/email/status', 'UserController@EmailStatus');
+Route::post('/users/email/setup', 'Api\UserCtrl@ChangeEmail');
+Route::post('/users/email/verification', 'Api\UserCtrl@GenerateEmailVerification');
+Route::get('/users/email/status', 'Api\UserCtrl@EmailStatus');
+Route::post('/users/post-reviews', 'Api\UserCtrl@postReview');
 
-Route::post('/account/post/initiation', 'UserDaftarAnggotaController@Initiation');
-Route::post('/account/post/setpin', 'UserDaftarAnggotaController@SetPIN');
-Route::post('/account/post/checkpin', 'UserDaftarAnggotaController@ValidatePIN');
-Route::post('/account/post/aktifasi', 'UserDaftarAnggotaController@Aktifasi');
-Route::post('/aktifasi/koin-sb', 'UserDaftarAnggotaController@AktifasiKoinSb');
-Route::get('/account/status', 'UserDaftarAnggotaController@Status');
+
+Route::post('/account/post/initiation', 'Api\DaftarAnggotaCtrl@Initiation');
+Route::post('/account/post/setpin', 'Api\DaftarAnggotaCtrl@SetPIN');
+Route::post('/account/post/checkpin', 'Api\DaftarAnggotaCtrl@ValidatePIN');
+Route::post('/account/post/aktifasi', 'Api\DaftarAnggotaCtrl@Aktifasi');
+Route::get('/account/status', 'Api\DaftarAnggotaCtrl@Status');
 
 //WebView
 Route::get('/help/faq',function ()  {

@@ -137,8 +137,8 @@ class UserMetaCtrl extends ApiCtrl
     }
 
     public function checkUserMeta(Request $request) {
-
-    	if($request->user('api') !== NULL){
+		
+    	if($this->auth == NULL){
 			return response()->json(['status'=>'error', 'message'=> "Invalid Header Credential!", 'code'=>404]);
     	}
 

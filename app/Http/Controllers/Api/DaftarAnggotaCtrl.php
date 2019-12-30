@@ -3,18 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-
+use App\User;
+use App\Rental\Models\UserMeta;
+use App\Rental\Models\DaftarAnggota;
+use Validator;
 class DaftarAnggotaCtrl extends ApiCtrl
 {
-    public function __construct(){
+    public function __construct(Request $request){
         parent::__construct();
         $this->validation_messages = [
             'password.required' => 'Password is required.',
             'email.unique' => 'Email must be unique.'
         ];
+        $this->auth = $request->user('api');
 
     }
-    public function init()
+    public function init(Request $request)
     {
         $messages = [
             'required' => 'The :attribute field is required.',
@@ -33,12 +37,12 @@ class DaftarAnggotaCtrl extends ApiCtrl
             return response()->json(['status' => 'error', 'message' => $validator->errors()->all(), 'code' => 404]);
         }
 
-        $validate = UserDaftarAnggota::where('user_id', $this->auth->getResourceOwnerID())->first();
+        $validate = DaftarAnggota::where('user_id', $this->auth->id)->first();
         if ($validate) {
             return response()->json(['status' => 'error', 'message' => 'User anda sudah terdaftar sebagai anggota!', 'code' => 404]);
         }
 
-        $meta_ktp = UserMeta::where("meta_users", $this->auth->getResourceOwnerID())->where("meta_key", "DATA_DIRI_EKTP")->first();
+        $meta_ktp = UserMeta::where("meta_users", $this->auth->id)->where("meta_key", "DATA_DIRI_EKTP")->first();
         if(!$meta_ktp) {
             return response()->json(['status' => 'error', 'message' => 'Error accoured!', 'code' => 404]);
         }
@@ -47,8 +51,8 @@ class DaftarAnggotaCtrl extends ApiCtrl
 
             DB::beginTransaction();
 
-            $model = new UserDaftarAnggota();
-            $model->user_id = $this->auth->getResourceOwnerID();
+            $model = new DaftarAnggota();
+            $model->user_id = $this->auth->id;
             $model->daftar_anggota = $request->daftar_anggota;
             //$model->nama            = $request->nama;
             $model->no_ktp = $meta_ktp->meta_value;
@@ -57,6 +61,16 @@ class DaftarAnggotaCtrl extends ApiCtrl
             $model->updated_by = 1;
             $model->status = 0;
             $exec = $model->save();
+
+            $account = new UserSaldo();
+            $kode = UserSaldo::max('id');
+            $noUrut = (int) substr($kode, 0, 10);$noUrut++;
+            if ($account) {
+                $account->user_id = $this->auth->id;
+                $account->no_anggota = sprintf("%10s", $noUrut); 
+                $account->save();
+            }
+
             DB::commit();
 
             if (!$exec) {
@@ -179,7 +193,7 @@ class DaftarAnggotaCtrl extends ApiCtrl
     public function updateData(Request $request)
     {
 
-        if (!app()->make('request')->header('App-ID') == env('APP_ID') && !app()->make('request')->header('App-Key') == env('APP_KEY')) {
+        if ($this->auth == NULL) {
             return response()->json(['status' => 'error', 'message' => "Invalid Header Credential!", 'code' => 404]);
         }
 
@@ -207,13 +221,13 @@ class DaftarAnggotaCtrl extends ApiCtrl
 
             DB::beginTransaction();
 
-            $meta_ktp = UserMeta::where("meta_users", $this->auth->getResourceOwnerID())->where("meta_key", "DATA_DIRI_EKTP")->first();
+            $meta_ktp = UserMeta::where("meta_users", $this->auth->id)->where("meta_key", "DATA_DIRI_EKTP")->first();
             if(!$meta_ktp) {
                 return response()->json(['status' => 'error', 'message' => 'Error accoured!', 'code' => 404]);
             }
 
-            $model =  UserDaftarAnggota::where('user_id', $this->auth->getResourceOwnerID())->first();
-            $model->user_id = $this->auth->getResourceOwnerID();
+            $model =  UserDaftarAnggota::where('user_id', $this->auth->id)->first();
+            $model->user_id = $this->auth->id;
             $model->daftar_anggota = $request->daftar_anggota;
             //$model->nama            = $request->nama;
             $model->no_ktp = $meta_ktp->meta_value;

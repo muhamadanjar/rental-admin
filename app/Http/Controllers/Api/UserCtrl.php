@@ -4,8 +4,12 @@ use App\User as UserMobile;
 use Illuminate\Http\Request;
 use Auth;
 use App\Rental\Models\UserSaldo;
-class UserCtrl extends Controller
+use App\Rental\Models\Reviews;
+class UserCtrl extends ApiCtrl
 {
+    public function __construct(Request $request){
+        $this->auth = $request->user('api');
+    }
     public function getUserLocation(){
         $data  = array();
         $ul = UserMobile::orderBy('id')->where('isanggota',1)->get();
@@ -19,9 +23,17 @@ class UserCtrl extends Controller
 
     public function postUpdateLocation(Request $request){
         try {
-            $user = Auth::guard('api')->user();
+            $user = $this->auth;
             if($user){
-                $this->moderatorrepo->updateUserLocation($user->id,$request);
+                $validator = Validator::make($request->all(), [
+                    'value'		=> 'required|max:225',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(['status'=>'error', 'message'=> $validator->errors()->all(), 'code'=>404]);
+                }
+                $location = UserMeta::where('meta_key', 'LOCATION')
+		    		->where('meta_users', $this->auth->id)
+		    		->update(['meta_value'=>$request->meta_value]);
                 return response()->json(['status'=>true,'data'=>$user,'message'=>'driver telah update lokasi'],200);
             }else{
                 return response()->json(['status'=>false,'message'=>'User tidak di temukan']);
@@ -61,8 +73,7 @@ class UserCtrl extends Controller
         }
     }
 
-    public function changeUsersPassword(Request $request)
-    {
+    public function changeUsersPassword(Request $request){
         if(app()->make('request')->header('App-ID') == env('APP_ID') && app()->make('request')->header('App-Key') == env('APP_KEY')) {
 
         	$messages = [
@@ -304,11 +315,10 @@ class UserCtrl extends Controller
         return response()->json(['status'=>'error', 'message'=>'System Error!', 'code'=>200]);
     }
 
-    public function getUserData()
-    {
+    public function getUserData(){
         if(app()->make('request')->header('App-ID') == env('APP_ID') && app()->make('request')->header('App-Key') == env('APP_KEY')) {
             try{
-                $data = User::where("id", $this->auth->getResourceOwnerID())->select('id','fbaccount','phonenumber','email','status')->first();
+                $data = User::where("id", $this->auth->id)->select('id','fbaccount','phonenumber','email','status')->first();
 
 
                 return response()->json(['status'=>'ok', 'message'=>'ok', 'code'=>200,'data'=>$data]);
@@ -321,5 +331,29 @@ class UserCtrl extends Controller
         return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404,'data'=>null]);
     }
 
+    public function postReview(Request $request){
+        try {
+            $valid = Validator::make($request->all(),[
+                'driverId'		=> 'required',
+                'rate'		=> 'required',
+                'tripCode'		=> 'required',
+            ]);
+            if ($valid->fails()) {
+                return response()->json(array('error'=>true,'message'=>'Ada Parameter yang kurang'));
+            }
+            $auth = $this->auth;
+            $model = new Review();
+            $model->trip_code = $request->tripCode;
+            $model->user_id = $auth->id;
+            $model->driver_id = $request->driverId;
+            $model->rate = $request->rate;
+            $model->description = $request->description;
+            $model->date = Carbon::now();
+            $model->save();
+
+        } catch (\Throwable $th) {
+            return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404,'data'=>null]);
+        }
+    }
     
 }

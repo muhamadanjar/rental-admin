@@ -16,7 +16,9 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-
+Route::get('gerbang/login',function(){
+    return redirect()->route('login');
+});
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => ['web', 'guest']], function () {
@@ -37,7 +39,7 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     Route::get('dashboard/statistik','Backend\DashboardCtrl@getStatistikView');
     Route::get('notifikasi', ['as' => 'notifikasi', 'uses' => 'Backend\DashboardCtrl@getNotifikasi']);
 
-
+    Route::get('search','Backend\BackendCtrl@search')->name('backend.search');
 
     
     
@@ -55,6 +57,10 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     Route::get('driver/data','Backend\DriverCtrl@data')->name('driver-ajaxData');
     Route::get('driver/{id}/detil','Backend\DriverCtrl@show')->name('driver-detail');
     Route::post('driver/addsaldo','Backend\DriverCtrl@addsaldo')->name('driver.addsaldo');
+    Route::get('driver/{id}/edit','Backend\DriverCtrl@edit')->name('driver.edit');
+    Route::post('driver','Backend\DriverCtrl@post')->name('driver.post');
+    Route::post('driver/{id}/delete','Backend\DriverCtrl@destroy')->name('driver.destroy');
+
 
     Route::get('customer','Backend\CustomerCtrl@view')->name('customer');
     Route::get('customer/data','Backend\CustomerCtrl@data')->name('customer-ajaxData');
@@ -85,6 +91,7 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     Route::post('report/pemesanan','Backend\ReportCtrl@pemesanan');
     Route::get('report/customer','Backend\ReportCtrl@customer')->name('report.customer');
     Route::post('report/customer','Backend\ReportCtrl@customer');
+    Route::post('report/disbursment','Backend\ReportCtrl@disbursment')->name('report.disbursment');
 
     Route::get('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');
     Route::post('setting/general','Backend\SettingCtrl@general')->name('backend.setting.general');

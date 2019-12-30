@@ -12,7 +12,13 @@ use App\Rental\Models\Notification;
 use App\User;
 use Carbon\Carbon;
 use Config;
+use Auth;
 class OrderCtrl extends Controller{
+
+    public function __construct(Request $request)
+    {
+        $this->auth = $request->user('api');
+    }
     public function postOrder(Request $request){
         $auth = auth('api')->user();
         try {
@@ -95,7 +101,7 @@ class OrderCtrl extends Controller{
 
     public function postTopUpSaldo(Request $request){
         try {
-            $auth = Auth::guard('api')->user();
+            $auth = $this->auth;
             if($auth){
                 $kode = ReqSaldo::max('id');
                 $noUrut = (int) substr($kode, 6, 3);
@@ -105,10 +111,18 @@ class OrderCtrl extends Controller{
                 ReqSaldo::insert(
                     ['req_from'=>$request->req_from,'req_code' => $kode, 'req_saldo' => $request->req_saldo, 'req_user_id' => $auth->id]
                 );
+                $message = 'Ada User Meminta Top up Saldo';
+                $insert['notif_date'] = date('Y-m-d H:i:s');
+                $insert['notif_from'] = 'USER';
+                $insert['message']    = $message;
+                $insert['status']     = 0;
+                $insert['user_id']    = $auth->id;
+                $insert['jenis']    = 'TOPUPSALDO';
+                $notif = Notification::insert($insert);
                 $data = ReqSaldo::where('req_code',$kode)->first();
                 return response()->json(['status'=>true,'data'=>$data]);
             }else{
-                return response()->json(['status'=>false]);
+                return response()->json(['status'=>false,'message'=>trans('auth.not_found')]);
             }
         } catch (\Throwable $th) {
             return response()->json(['status'=>false,'message'=>$th->getMessage()]);
@@ -133,8 +147,19 @@ class OrderCtrl extends Controller{
                 $filename = $name.'.jpg';
 
                 ReqSaldo::insert(
-                    ['req_file'=>$filename,'req_from'=>$request->req_from,'req_code' => $kode, 'req_saldo' => $request->req_saldo, 'req_user_id' => $auth->id,'status'=>0,'req_norek'=>$request->req_norek]
+                    ['req_file'=>$filename,'req_from'=>$request->req_from,'req_code' => $kode, 'req_saldo' => $request->req_saldo, 'req_user_id' => $auth->id,'status'=>0,'req_norek'=>$request->req_norek,'req_date'=>Carbon::now()]
                 );
+
+                $message = 'Ada User Meminta Top up Saldo';
+                $admin = UserAdmin::first();
+                $insert['notif_date'] = date('Y-m-d H:i:s');
+                $insert['notif_from'] = 'USER';
+                $insert['message']    = $message;
+                $insert['status']     = 0;
+                $insert['user_id']    = $admin->id_user;
+                $insert['jenis']    = 'TOPUPSALDO';
+                $notif = Notification::insert($insert);
+
 
                 file_put_contents(public_path('storage/uploads/bukti').DIRECTORY_SEPARATOR.$filename, $realImage);
                 return response()->json(['status'=>true,'message'=>'Image Uploaded Successfully.']);    

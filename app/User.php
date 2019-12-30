@@ -24,7 +24,7 @@ class User extends Authenticatable{
         'phonenumber' => 'Phone Number',
         'email' => 'Email',
         'password' => 'Password',
-        'is_admin' => 'Is Admin',
+        'isadmin' => 'Is Admin',
         'isactived' => 'Status'
     );
 

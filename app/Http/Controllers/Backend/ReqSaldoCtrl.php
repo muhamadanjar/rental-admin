@@ -10,7 +10,7 @@ class ReqSaldoCtrl extends BackendCtrl
 {
     public function index()
 	{
-		$data = ReqSaldo::all();
+		$data = ReqSaldo::orderBy('req_date','DESC')->get();
 		return view('backend.reqsaldo.index',compact('data'));
 	}
 

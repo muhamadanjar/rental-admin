@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Hash;
+use App\User;
+use App\Rental\Models\UserMeta;
+use Validator;
 class InitCtrl extends ApiCtrl{
     public function init(Request $request){
         $check1 = User::where('email', $request->phonenumber)->first();
@@ -42,14 +45,13 @@ class InitCtrl extends ApiCtrl{
         $email = (!empty($request->input('email')) ? $request->input('email') : $request->phonenumber );
 
         try{
-            
-            $hasher = app()->make('hash');
             $user = new User();
             $user->email = $email;
+            $user->username = $email;
             $user->phonenumber = $request->phonenumber;
             $user->password = Hash::make($request->password);
-            $user->is_admin = 0;
-            $user->status = 0;
+            $user->isadmin = 0;
+            $user->isactived = 0;
             $exec = $user->save();
             if(!$exec) {
                 return response()->json(['status'=>'error', 'message'=>'Failed to register', 'code'=>200]);
