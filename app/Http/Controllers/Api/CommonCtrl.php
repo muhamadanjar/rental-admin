@@ -10,6 +10,7 @@ use App\Rental\Models\Promo;
 use App\Rental\Models\RentPackage;
 use App\Rental\Models\CarType;
 use App\Rental\Models\Review;
+use App\Provinsi;
 class CommonCtrl extends Controller{
     protected $successStatus = 200;
     public function getTypeCar(Request $request){
@@ -94,5 +95,12 @@ class CommonCtrl extends Controller{
             ]);
             return response()->json(array('message'=>'Review Berhasil ditambahkan'));
         }
+    }
+    public function getProvinsi($id = NULL){
+        $data = Provinsi::orderBy('kode_prov')->get();
+        if ($id != NULL) {
+            $data = Provinsi::where('kode_prov',$id)->orderBy('kode_prov')->get();
+        }
+        return response()->json($data);
     }
 }

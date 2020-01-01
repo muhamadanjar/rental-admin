@@ -5,6 +5,10 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Rental\Models\UserSaldo;
 use App\Rental\Models\Reviews;
+use App\Rental\Models\Notification;
+use App\Rental\Models\Review;
+use Validator;
+use Carbon\Carbon;
 class UserCtrl extends ApiCtrl
 {
     public function __construct(Request $request){
@@ -350,9 +354,20 @@ class UserCtrl extends ApiCtrl
             $model->description = $request->description;
             $model->date = Carbon::now();
             $model->save();
+            
+            Notification::insert(array(
+                'notif_date' => Carbon::now(),
+                'notif_from' => 'USER',
+                'message' => 'User telah melakukan review pada driver',
+                'jenis' => 'REVIEW',
+                'user_id'=> '1',
+            ));
 
-        } catch (\Throwable $th) {
-            return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404,'data'=>null]);
+            return response()->json(array('status'=>true,'message'=>'Review Berhasil di kirim'));
+            
+
+        } catch (\Throwable $e) {
+            return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404,'data'=>null,'exception'=>$e->getMessage()]);
         }
     }
     

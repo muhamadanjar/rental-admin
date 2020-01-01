@@ -132,6 +132,7 @@ class OrderCtrl extends Controller{
     public function postUploadBukti(Request $request){
         try {
             $auth = Auth::guard('api')->user();
+            $targetDir = public_path('storage/uploads/bukti');
             if($auth){
                 $kode = ReqSaldo::max('id');
                 $noUrut = (int) substr($kode, 6, 3);
@@ -139,12 +140,34 @@ class OrderCtrl extends Controller{
                 $char = "SLD";
                 $kode = $char .date('His'). sprintf("%06s", $noUrut);
                 
-                $image = $request->image;
-                $name = md5($request->name.date('His'));
-                $realImage = base64_decode($image);
-                $f = finfo_open();
-                $mime_type = finfo_buffer($f, $realImage, FILEINFO_MIME_TYPE);
-                $filename = $name.'.jpg';
+                $fs = $request->file('images');
+                $image_name = $fs->getClientOriginalName();
+                $size = $fs->getSize();
+                $type = $fs->getMimeType();
+                $tmp_name = $fs->path();
+                $ext = $fs->clientExtension();
+
+                $filename = $kode.'_'.substr(number_format(time() * rand(),0,'',''),0,10).'.'.$ext;
+                $targetFilePath = $targetDir;
+                $fileFullPath = $targetFilePath . DIRECTORY_SEPARATOR. $filename;
+                $fs->move($targetFilePath, $filename);  
+
+                $images_arr = array(
+                    'target'=>$targetFilePath,
+                    'origin_name' => $image_name,
+                    'filename' => $filename,
+                    'tmp_name' => $tmp_name,
+                    'type' => $type,
+                    'targetDir' => $targetDir,
+                    'fileFullPath' => $fileFullPath,
+                ); 
+
+                // $image = $request->image;
+                // $name = md5($request->name.date('His'));
+                // $realImage = base64_decode($image);
+                // $f = finfo_open();
+                // $mime_type = finfo_buffer($f, $realImage, FILEINFO_MIME_TYPE);
+                // $filename = $name.'.jpg';
 
                 ReqSaldo::insert(
                     ['req_file'=>$filename,'req_from'=>$request->req_from,'req_code' => $kode, 'req_saldo' => $request->req_saldo, 'req_user_id' => $auth->id,'status'=>0,'req_norek'=>$request->req_norek,'req_date'=>Carbon::now()]
@@ -156,16 +179,17 @@ class OrderCtrl extends Controller{
                 $insert['notif_from'] = 'USER';
                 $insert['message']    = $message;
                 $insert['status']     = 0;
+                $insert['data'] = json_encode(array('url'=>route('customer.request_saldo')));
                 $insert['user_id']    = $admin->id_user;
                 $insert['jenis']    = 'TOPUPSALDO';
                 $notif = Notification::insert($insert);
 
 
-                file_put_contents(public_path('storage/uploads/bukti').DIRECTORY_SEPARATOR.$filename, $realImage);
+                // file_put_contents(public_path('storage/uploads/bukti').DIRECTORY_SEPARATOR.$filename, $realImage);
                 return response()->json(['status'=>true,'message'=>'Image Uploaded Successfully.']);    
-            }
-
-            
+            }else{
+                return response()->json(['status'=>'error', 'message'=>trans('auth.not_found'), 'code'=>404]);
+            }            
         } catch (\Throwable $th) {
             return response()->json(['status'=>false,'message'=>$th->getMessage()]);
         }

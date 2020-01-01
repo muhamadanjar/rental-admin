@@ -63,6 +63,7 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 
 
     Route::get('customer','Backend\CustomerCtrl@view')->name('customer');
+    Route::post('customer','Backend\CustomerCtrl@post')->name('customer.post');
     Route::get('customer/data','Backend\CustomerCtrl@data')->name('customer-ajaxData');
     Route::get('customer/{id}/edit','Backend\CustomerCtrl@edit')->name('backend.customer.edit');
     Route::get('customer/{id}/view','Backend\CustomerCtrl@show')->name('backend.customer.show');

@@ -2,23 +2,23 @@
 
 @section('content-admin')
 
-<form role="form" method="POST" enctype="multipart/form-data" action="{{ route('backend.customer.post') }}">
+<form role="form" method="POST" enctype="multipart/form-data" action="{{ route('customer.post') }}">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
 			<div class="card card-default">
-				<div class="box-header with-border">
-					<h6 class="box-title"><i class="fa fa-road"></i></h6>
+				<div class="card-header with-border">
+					<h6 class="card-title"><i class="fa fa-user"></i></h6>
 					<div class="header-elements text-right">
                         <div class="btn-group pull-right">
                             <button type="submit" class="btn btn-sm btn-primary">
                                 <i class="fa fa-send ico-save"></i> Simpan
                             </button>
-							<a href="{{ route('backend.customer.index') }}" class=" btn btn-sm btn-success ">
+							<a href="{{ route('customer') }}" class=" btn btn-sm btn-success ">
                             <i class="fa fa-mail-reply"></i> Kembali</a>
                         </div>
                     </div>
 				</div>
-				<div class="box-body">
+				<div class="card-body">
 					{{ @csrf_field() }}
 					<div class="row">
 						<div class="col-md-4">
@@ -33,12 +33,12 @@
 					</div>
 					<div class="form-group">
 						<label>Nama</label>
-						<input type="text" class="form-control" name="name" value="" required>
+					<input type="text" class="form-control" name="name" value="{{ $user->name }}" required>
 						<div class="col-md-6"></div>
 					</div>
 					<div class="form-group">
 						<label>Email</label>
-						<input type="email" class="form-control" name="email" value="" required>
+						<input type="email" class="form-control" name="email" value="{{ $user->email }}" required>
 						<div class="col-md-6"></div>
 					</div>
 					<div class="row">
@@ -88,9 +88,7 @@
 								<label>Kota</label>
 								<select name="city_id" class="form-control">
 									<option value="0">---</option>
-									@foreach($kota as $kotas)
-									<option value="{{$kotas->kode_kab}}">{{$kotas->nama_kabupaten}}</option>
-									@endforeach
+									
 								</select>
 							</div>
 						</div>

@@ -2,7 +2,7 @@
 
 @section('content-admin')
 
-<form role="form" method="POST" enctype="multipart/form-data" action="{{ url('/backend/customer/'.$data->id.'/update')}}">
+<form role="form" method="POST" enctype="multipart/form-data" action="{{ route('customer.post')}}">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
 			<div class="card card-default">
@@ -13,7 +13,7 @@
                             <button type="submit" class="btn btn-sm btn-primary">
                                 <i class="fa fa-send ico-save"></i> Simpan
                             </button>
-							<a href="{{ route('backend.customer.index') }}" class=" btn btn-sm btn-success ">
+							<a href="{{ route('customer') }}" class=" btn btn-sm btn-success ">
                             <i class="fa fa-mail-reply"></i> Kembali</a>
                         </div>
                     </div>

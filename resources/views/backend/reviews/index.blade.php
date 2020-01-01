@@ -21,11 +21,24 @@
                         <tbody>
                             @forelse ($review as $item)
                                 <tr>
-                                    <td>{{$item->trip_code}}</td>
-                                    <td>{{$item->driver->name }}</td>
-                                    <td>{{$item->rider->name }}</td>
+                                    <td>
+                                        @isset($item->driver)
+                                        {{$item->driver->mobil[0]->no_plat}}
+                                        @endisset
+                                    </td>
+                                    <td>
+                                        @isset($item->driver)
+                                        {{$item->driver->name }}
+                                        @endisset
+                                    </td>
+                                    <td>
+                                        @isset($item->rider)
+                                            
+                                        {{$item->rider->name }}
+                                        @endisset
+                                    </td>
                                     <td>{{$item->date}}</td>
-                                    <td>{{$item->rating}}</td>
+                                    <td><span class="badge badge-primary">{{$item->rate}}</span></td>
                                     <td>{{$item->description}}</td>
                                 </tr>    
                             @empty

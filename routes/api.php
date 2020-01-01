@@ -30,6 +30,8 @@ Route::group([
     });
 });
 
+
+
 Route::post('register','Api\InitCtrl@init');
 Route::post('register/init','Api\DaftarAnggotaCtrl@init');
 Route::post('register/setpin','Api\DaftarAnggotaCtrl@SetPIN');
@@ -45,6 +47,10 @@ Route::get('bank/{id?}','Api\CommonCtrl@getBank');
 Route::get('services-type/{id?}','Api\CommonCtrl@getServiceType');
 Route::get('global-settings','Api\CommonCtrl@getSettings');
 
+Route::get('getprovinsi','Api\CommonCtrl@getProvinsi');
+
+
+
 Route::post('reviews','Api\CommonCtrl@postReview');
 
 //Order
@@ -53,9 +59,6 @@ Route::post('booking/update-status','Api\OrderCtrl@postUpdateOrder');
 Route::post('topup/saldo','Api\OrderCtrl@postTopUpSaldo');
 Route::post('topup/bukti','Api\OrderCtrl@postUploadBukti');
 Route::post('booking/history','Api\OrderCtrl@getHistoryOrderByUser');
-
-
-
 
 //User
 Route::get('user/location','Api\UserCtrl@getUserLocation');

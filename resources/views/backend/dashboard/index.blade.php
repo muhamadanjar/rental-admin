@@ -46,7 +46,7 @@
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="info-box">
-          <span class="info-box-icon bg-red"><i class="fa fa-bar-chart"></i></span>
+          <span class="info-box-icon bg-red"><i class="fas fa-chart-bar"></i></span>
           <div class="info-box-content">
             <span class="info-box-text">Pengunjung</span>
             <span class="info-box-number">{{$totalpengunjung}}<small></small></span>
@@ -70,7 +70,7 @@
                 <h4 class="text-center">Aktif</h4>
 
                 <div class="color-palette-set">
-                  <div class="bg-primary color-palette"><span>#007bff</span></div>
+                  <div class="bg-primary color-palette"><span></span></div>
                   <div class="bg-primary disabled color-palette"><span class="span_actived">Disabled</span></div>
                 </div>
               </div>
@@ -79,7 +79,7 @@
                 <h4 class="text-center">Ordered</h4>
 
                 <div class="color-palette-set">
-                  <div class="bg-secondary color-palette"><span>#6c757d</span></div>
+                  <div class="bg-secondary color-palette"><span></span></div>
                   <div class="bg-secondary disabled color-palette"><span class="span_ordered">Disabled</span></div>
                 </div>
               </div>
@@ -88,7 +88,7 @@
                 <h4 class="text-center">Unavailable</h4>
 
                 <div class="color-palette-set">
-                  <div class="bg-info color-palette"><span>#17a2b8</span></div>
+                  <div class="bg-info color-palette"><span></span></div>
                   <div class="bg-info disabled color-palette"><span class="span_unavailable">Disabled</span></div>
                 </div>
               </div>
@@ -127,13 +127,13 @@
                   <tbody>
                       @foreach($orderList as $k => $v)
                       <tr>
-                          <td><a href="#">{{$v->order_code}}</a></td>
+                          <td><a href="{{ route('admin-booking-view',[$v->order_id])}}">{{$v->order_code}}</a></td>
                           <td>
                             @isset($v->driver)
-                              {{$v->driver->name}}
+                            {{$v->driver->name}}
                             @endisset
                           </td>
-                          <td><span class="badge badge-success">{{$v->order_status}}</span></td>
+                          <td><span class="badge badge-success">{{$v->status}}</span></td>
                           <td><span class="badge badge-info">{{ 'Rp.'.number_format($v->order_nominal,2,',','.')}}</span></td>
                       </tr>
                       @endforeach

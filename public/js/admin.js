@@ -47,11 +47,12 @@ function resLastNotif(a) {
     
     $('span.notif_count').html(a.count);
     $('.menu_header').html(a.message);
-    let data = a.data
+    let data = a.data;
+    $( ".menu_notifikasi" ).html('');
     data.map(function(v,i){
         
             let span = `${v.message} <span class="float-right text-muted text-sm">${v.notifHuman}</span>`;
-            $( "<a class=\"dropdown-item\">" )
+            $( "<a href='#' class=\"dropdown-item\">" )
                 .append("<i class='fas fa-file mr-2'>")
                     .append(span)
             

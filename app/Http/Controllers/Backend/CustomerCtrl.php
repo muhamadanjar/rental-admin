@@ -112,8 +112,10 @@ class CustomerCtrl extends MainCtrl{
 	public function destroy($id){
 		
 	}
-	public function edit($id)
-	{
-		# code...
+	public function edit($id){
+		session(['aksi'=>'edit']);
+		$user = User::find($id)->where('isanggota',1);
+		return view('backend.customer.form')->withData($user);
 	}
+	
 }

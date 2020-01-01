@@ -4,6 +4,7 @@ namespace App\Rental\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\User as UserAnggota;
+use Config;
 class Order extends Model
 {
     protected $table = 'm_order';
@@ -19,11 +20,11 @@ class Order extends Model
 
 
     public function driver(){
-        return $this->belongsTo(UserAnggota::class,'order_driver_id','id')->where('isanggota',1);
+        return $this->belongsTo(UserAnggota::Class,'order_driver_id','id')->whereIsanggota(Config::get('app.user_driver'));
     }
 
     public function customer(){
-        return $this->belongsTo(UserAnggota::class,'order_user_id','id')->where('isanggota',2);
+        return $this->belongsTo(UserAnggota::class,'order_user_id','id')->whereIsanggota(Config::get('app.user_customer'));
     }
 
     public function getStatusAttribute(){

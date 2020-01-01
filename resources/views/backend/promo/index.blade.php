@@ -35,7 +35,7 @@
                         <td>{{ date('d-m-Y', strtotime($v->tgl_akhir))}}</td>
                         <td><span title="{{$v->description}}" class="desctooltips">{{ substr($v->description,0,40)}}...</span>
                         </td>
-                        <td><a class="fancycard" data-fancycard="fancycard" href="{{ $v->getPermalink() . '/' . $v->foto }}"><img src="{{ $v->getPermalink() . '/' . $v->foto }}" height="50px" width="50px" title="klik gambar untuk memperbesar" /></a></td>
+                        <td><a class="fancycard" data-toggle="lightbox" data-fancycard="fancycard" href="{{ $v->getPermalink() . '/' . $v->foto }}"><img src="{{ $v->getPermalink() . '/' . $v->foto }}" height="50px" width="50px" title="klik gambar untuk memperbesar" /></a></td>
                         <td>
                             <div class="btn-group">
                                 <button data-toggle="dropdown" class="btn btn-xs btn-icon dropdown-toggle" type="button"><i class="icon-cog4"></i><span class="caret"></span></button>
@@ -68,7 +68,8 @@
 @parent
 <link rel="stylesheet" href="{{ url('/plugins/datatables/datatables.min.css')}}">
 <link rel="stylesheet" href="{{url('/plugins/fancycard/source/jquery.fancycard.css?v=2.1.7')}}" type="text/css" media="screen" />
-
+<!-- Ekko Lightbox -->
+<link rel="stylesheet" href="{{ asset('plugins/ekko-lightbox/ekko-lightbox.css')}}">
 @endsection
 @section('script-end')
 @parent
@@ -77,13 +78,19 @@
 
 <script type="text/javascript" src="{{ url('/plugins/datatables/datatables.min.js')}}"></script>
 
-
+<script src="{{ asset('plugins/ekko-lightbox/ekko-lightbox.min.js')}}"></script>
 <script src="{{ asset('/js/rm.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $(".fancycard").fancycard();
-        $(".desctooltips").tooltip();
+        // $(".fancycard").fancycard();
+        // $(".desctooltips").tooltip();
+        $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+            event.preventDefault();
+            $(this).ekkoLightbox({
+                alwaysShowClose: true
+            });
+        });
     });
 </script>
 @endsection

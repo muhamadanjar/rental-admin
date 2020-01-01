@@ -10,7 +10,7 @@ function reqLastPosition(address){
 function reqLastNotif(address){
 	ajax(address, null, 'GET', function(c) {
 		self.postMessage({ cmd: 'resLastNotif', val: c });
-		timeReqLastNotif = setTimeout(function() { reqLastPosition(address); }, 30000);
+		timeReqLastNotif = setTimeout(function() { reqLastNotif(address); }, 30000);
 	});
 }
 self.addEventListener('message', function(a) {
