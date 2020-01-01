@@ -52,7 +52,7 @@ function resLastNotif(a) {
     data.map(function(v,i){
         
             let span = `${v.message} <span class="float-right text-muted text-sm">${v.notifHuman}</span>`;
-            $( "<a href='#' class=\"dropdown-item\">" )
+            $(`<a href='${Laravel.serverUrl}/notif/read/${v.id}' class=\"dropdown-item\">`)
                 .append("<i class='fas fa-file mr-2'>")
                     .append(span)
             

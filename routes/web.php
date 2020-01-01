@@ -41,7 +41,9 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
 
     Route::get('search','Backend\BackendCtrl@search')->name('backend.search');
 
-    
+    Route::get('notif/read/{id?}','Backend\NotificationCtrl@read')->name('notif.read');
+    Route::get('notif/data/{id?}','Backend\NotificationCtrl@read')->name('notif.read');
+    Route::get('notif/url/{id?}','Backend\NotificationCtrl@read')->name('notif.read');
     
     //route customer
 	// Route::resource('customer', 'CustomerCtrl', ['only' => ['index', 'create', 'edit', 'destroy']]);

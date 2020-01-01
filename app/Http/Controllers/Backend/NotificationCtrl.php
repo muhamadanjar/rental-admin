@@ -4,34 +4,45 @@ namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
 use App\Rental\Models\Notification;
+use Carbon\Carbon;
 class NotificationCtrl extends BackendCtrl{
-    public function read($a){
-        if ($a != NULL) {
-            Notification::where('id',$a)->update([
+    public function read(Request $request,$id){
+        if ($id != NULL) {
+            Notification::where('id',$id)->update([
                 'status'=>1,
                 'read_at'=>Carbon::now(),
                 'updated_at'=>Carbon::now()
             ]);    
         }
+
+        if ($request->ajax()) {
+            return response()->json(array('message'=>'Data Notif di perbaharui'));
+        }else{
+            return \response()->redirectToIntended('/');
+        }
+        
     }
 
-    public function get_url(){
-        $b = Notification::where('id',$a)->select('url')->first();
+    public function get_url(Request $request,$id){
+        $b = Notification::where('id',$id)->select('url')->first();
         return (isset($b) && trim($b->url) !== '') ? trim($b->url): '';
     }
 
-    public function get_data($a){
+    public function get_data($id){
         if ($a != NULL) {
-            $b = Notification::where('id',$a)->select('data')->first();
+            $b = Notification::where('id',$id)->select('data')->first();
             return (isset($b) && trim($b->data) !== '') ? trim($b->data): '';
         }
     }
-    public function to_users($a,$b = array()){
+    public function to_users(Request $request){
+        $a = $request->to_users;
+        $b = $request;
         if (is_array($a)) {
 			$d = array();
 			foreach ($a as $c) {
 				$f['data'] = ((isset($b['data']) && json_decode($b['data']) !== NULL) ? $b['data']: NULL);
-				$f['message'] = (isset($b['text']) ? $b['text']: '');
+                $f['message'] = (isset($b['text']) ? $b['text']: '');
+                $f['jenis'] = (isset($b['jenis']) ? $b['jenis']: '');
 				$f['user_id'] = $c;
 				$f['url'] = (isset($b['url']) ? $b['url']: NULL);
 				$f['created_at'] = date('Y-m-d H:i:s');
@@ -51,6 +62,10 @@ class NotificationCtrl extends BackendCtrl{
     }
 
     public function to_roles($roles = NULL){
-        # code...
+        if (is_array($roles)) {
+            
+        }elseif (is_numeric($roles) || is_string($roles)) {
+            
+        }
     }
 }
