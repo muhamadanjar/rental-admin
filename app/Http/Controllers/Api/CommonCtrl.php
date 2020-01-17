@@ -10,6 +10,7 @@ use App\Rental\Models\Promo;
 use App\Rental\Models\RentPackage;
 use App\Rental\Models\CarType;
 use App\Rental\Models\Review;
+use App\Rental\Models\ServiceType;
 use App\Provinsi;
 class CommonCtrl extends Controller{
     protected $successStatus = 200;
@@ -25,7 +26,7 @@ class CommonCtrl extends Controller{
         foreach($data as $k =>$v){
             $data[$k]->path_url = $v->imagePath;
         }
-        return response()->json(['status'=>true,'data'=>$data]);
+        return response()->json(['status'=>'success','data'=>$data,'code'=>200]);
     }
     public function getRentPackage($id = null){
         $rent = new RentPackage();
@@ -37,7 +38,7 @@ class CommonCtrl extends Controller{
         foreach($data as $k =>$v){
             $data[$k]->path_url = $v->imagePath;
         }
-        return response()->json(['status'=>true,'data'=>$data]);
+        return response()->json(['status'=>true,'data'=>$data,code=>200]);
     }
 
     public function getPromo($id = NULL){
@@ -55,20 +56,20 @@ class CommonCtrl extends Controller{
 
     public function getSettings(){
         $setting = Setting::pluck('setting_value', 'setting_key');
-        return response()->json(['status'=>true,'data'=>$setting],200);
+        return response()->json(['status'=>'success','data'=>$setting,'code'=>200],200);
     }
 
     public function getServiceType(){
         $res = array();
         try {
             $st = ServiceType::orderBy('id')->get();
-            $res['status'] = true;
+            $res['status'] = 'success';
             $res['data'] = $st;
             $res['message'] = "Mengambil data Service Type";
             return response()->json($res,200);
         } catch (\Throwable $th) {
-            $res['status'] = false;
-            $res['message'] = "Gagal Mengambil Service Type";
+            $res['status'] = 'failed';
+            $res['message'] = $th->getMessage();
             return response()->json($res,500);
         }
     }
@@ -79,7 +80,7 @@ class CommonCtrl extends Controller{
             $t->where('bank_code',$id);
         }
         $a = $t->get();
-        return response()->json(['status'=>true,'data'=>$a]);
+        return response()->json(['status'=>'success','data'=>$a]);
     }
 
     public function postReview(Request $request){
@@ -93,7 +94,7 @@ class CommonCtrl extends Controller{
                 'description'=>$request->description,
                 'date' => Carbon::now()
             ]);
-            return response()->json(array('message'=>'Review Berhasil ditambahkan'));
+            return response()->json(array('code'=>200,'message'=>'Review Berhasil ditambahkan'));
         }
     }
     public function getProvinsi($id = NULL){
@@ -101,6 +102,6 @@ class CommonCtrl extends Controller{
         if ($id != NULL) {
             $data = Provinsi::where('kode_prov',$id)->orderBy('kode_prov')->get();
         }
-        return response()->json($data);
+        return response()->json(['code'=>200,'data'=>$data]);
     }
 }

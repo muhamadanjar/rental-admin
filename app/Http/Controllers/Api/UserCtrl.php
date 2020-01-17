@@ -127,7 +127,6 @@ class UserCtrl extends ApiCtrl
         return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404]);
     }
 
-
     public function checkPassword(Request $request)
     {
         if(app()->make('request')->header('App-ID') == env('APP_ID') && app()->make('request')->header('App-Key') == env('APP_KEY')) {
@@ -151,33 +150,26 @@ class UserCtrl extends ApiCtrl
         return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404]);
     }
 
-    public function userNotification(Request $request)
-    {
-    	if(app()->make('request')->header('App-ID') == env('APP_ID') && app()->make('request')->header('App-Key') == env('APP_KEY')) {
-            try {
+    public function userNotification(Request $request){
+        try {
+            $userId = UserMobile::select('id')->find($this->auth->id);
+            // if($request->userid == $user->id) {
+                $n = Notification::orderBy('id','DESC')->where('user_id',$userId)->get();
+                return response()->json(['status'=>'success', 'data'=>$n, 'code'=>200]);
+            // }
 
-                $user = User::select('id')->find($this->auth->getResourceOwnerID());
+            return response()->json(['status'=>'error', 'message'=>'Error occurred', 'code'=>404]);
 
-        		if($request->userid == $user->id) {
-        			return response()->json(['status'=>'success', 'message'=>$request->message, 'code'=>200]);
-        		}
-
-        		return response()->json(['status'=>'error', 'message'=>'Error occurred', 'code'=>404]);
-
-        	}catch (PDOException $e) {
-                \Log::error($e);
-        		return response()->json(['status'=>'error', 'message'=>'System Error', 'code'=>404]);
-    		}
+        }catch (PDOException $e) {
+            \Log::error($e);
+            return response()->json(['status'=>'error', 'message'=>'System Error', 'code'=>404]);
         }
+        
 
         return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404]);
     }
 
-    public function ChangeEmail(Request $request)
-    {
-        if(app()->make('request')->header('App-ID') != env('APP_ID') && app()->make('request')->header('App-Key') != env('APP_KEY')) {
-            return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>200]);
-        }
+    public function ChangeEmail(Request $request){
 
         $messages = [
             'required' => 'The :attribute field is required.',
@@ -193,9 +185,8 @@ class UserCtrl extends ApiCtrl
             return response()->json(['status'=>'error', 'message'=> $validator->errors()->all(), 'code'=>200]);
         }
 
-        $res = User::where("id", $this->auth->getResourceOwnerID())->update([
+        $res = UserMobile::where("id", $this->auth->id)->update([
             'phonenumber' => $request->email,
-            'verified_email' => '0'
         ]);
 
         if (!$res) {
@@ -206,19 +197,16 @@ class UserCtrl extends ApiCtrl
 
     }
 
-    public function GenerateEmailVerification(Request $request)
-    {
-        if(app()->make('request')->header('App-ID') != env('APP_ID') && app()->make('request')->header('App-Key') != env('APP_KEY')) {
-            return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>200]);
-        }
+    public function GenerateEmailVerification(Request $request){
+        
 
-        $email = User::where("id", $this->auth->getResourceOwnerID())->first();
+        $email = UserMobile::where("id", $this->auth->id)->first();
 
         if (!$email) {
             return response()->json(['status'=>'error', 'message'=>'User not found!', 'code'=>200]);
         }
 
-        if ($email->verified_email == '2') {
+        if ($email->isverified == '1') {
             return response()->json(['status'=>'error', 'message'=>'Email anda sudah terverifikasi!', 'code'=>200]);
         }
 
@@ -232,7 +220,7 @@ class UserCtrl extends ApiCtrl
         $content['link']  = url('users/email/verification?app='.env('APP_EMAIL_ID').'&key='.env('APP_EMAIL_KEY_ID').'&tknEmail='.$nextid);
         $Mail = Mail::send('emailverif', $content, 
             function($message) use ($content) {
-                $message->to($content['email'], 'noreply')->subject('PIKO - SB (EMAIL VERIFICATION)');
+                $message->to($content['email'], 'noreply')->subject('RENTAL - UTAMA (EMAIL VERIFICATION)');
             }
         ); 
 
@@ -243,7 +231,7 @@ class UserCtrl extends ApiCtrl
         try {
 
             SetPassword::where('users', $email->id)->where('status', '1')->delete();
-            User::where('id', $email->id)->update(['verified_email' => '1']);
+            User::where('id', $email->id)->update(['isverified' => '1']);
 
             DB::beginTransaction();
                 $model = new SetPassword();

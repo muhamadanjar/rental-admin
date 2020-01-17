@@ -24,11 +24,11 @@ class OrderCtrl extends Controller{
         try {
             
             if (!$auth) {
-                return response()->json(array('message'=>trans('auth.not_found')));
+                return response()->json(array('status'=>'error','code'=>400,'message'=>trans('auth.not_found')));
             }
 
             if ($auth->isavail > 1) {
-                return response()->json(array('message'=>trans('order.intransaction')));
+                return response()->json(array('status'=>'error','code'=>400,'message'=>trans('order.intransaction')));
             }
             DB::beginTransaction();
             $noRef = substr(number_format(time() * rand(),0,'',''),0,10);
@@ -63,7 +63,7 @@ class OrderCtrl extends Controller{
             }
             
             DB::commit();
-            return response()->json(array('message'=>trans('order.success')));
+            return response()->json(array('status'=>'success','message'=>trans('order.success'),'code'=>200));
             
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -139,29 +139,31 @@ class OrderCtrl extends Controller{
                 $noUrut++;
                 $char = "SLD";
                 $kode = $char .date('His'). sprintf("%06s", $noUrut);
-                
-                $fs = $request->file('images');
-                $image_name = $fs->getClientOriginalName();
-                $size = $fs->getSize();
-                $type = $fs->getMimeType();
-                $tmp_name = $fs->path();
-                $ext = $fs->clientExtension();
+                $filename ='noimage.jpg';
+                if($request->hasfile('images')){
+                    
+                    $fs = $request->file('images');
+                    $image_name = $fs->getClientOriginalName();
+                    $size = $fs->getSize();
+                    $type = $fs->getMimeType();
+                    $tmp_name = $fs->path();
+                    $ext = $fs->clientExtension();
 
-                $filename = $kode.'_'.substr(number_format(time() * rand(),0,'',''),0,10).'.'.$ext;
-                $targetFilePath = $targetDir;
-                $fileFullPath = $targetFilePath . DIRECTORY_SEPARATOR. $filename;
-                $fs->move($targetFilePath, $filename);  
+                    $filename = $kode.'_'.substr(number_format(time() * rand(),0,'',''),0,10).'.'.$ext;
+                    $targetFilePath = $targetDir;
+                    $fileFullPath = $targetFilePath . DIRECTORY_SEPARATOR. $filename;
+                    $fs->move($targetFilePath, $filename);  
 
-                $images_arr = array(
-                    'target'=>$targetFilePath,
-                    'origin_name' => $image_name,
-                    'filename' => $filename,
-                    'tmp_name' => $tmp_name,
-                    'type' => $type,
-                    'targetDir' => $targetDir,
-                    'fileFullPath' => $fileFullPath,
-                ); 
-
+                    $images_arr = array(
+                        'target'=>$targetFilePath,
+                        'origin_name' => $image_name,
+                        'filename' => $filename,
+                        'tmp_name' => $tmp_name,
+                        'type' => $type,
+                        'targetDir' => $targetDir,
+                        'fileFullPath' => $fileFullPath,
+                    ); 
+                }
                 // $image = $request->image;
                 // $name = md5($request->name.date('His'));
                 // $realImage = base64_decode($image);
@@ -179,7 +181,8 @@ class OrderCtrl extends Controller{
                 $insert['notif_from'] = 'USER';
                 $insert['message']    = $message;
                 $insert['status']     = 0;
-                $insert['data'] = json_encode(array('url'=>route('customer.request_saldo')));
+                $insert['url']     = route('customer.request_saldo');
+                $insert['data'] = json_encode(array('url'=>route('customer.request_saldo'),'code'=>$kode,));
                 $insert['user_id']    = $admin->id_user;
                 $insert['jenis']    = 'TOPUPSALDO';
                 $notif = Notification::insert($insert);

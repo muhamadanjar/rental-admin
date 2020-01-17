@@ -49,8 +49,6 @@ Route::get('global-settings','Api\CommonCtrl@getSettings');
 
 Route::get('getprovinsi','Api\CommonCtrl@getProvinsi');
 
-
-
 Route::post('reviews','Api\CommonCtrl@postReview');
 
 //Order
@@ -63,7 +61,7 @@ Route::post('booking/history','Api\OrderCtrl@getHistoryOrderByUser');
 //User
 Route::get('user/location','Api\UserCtrl@getUserLocation');
 Route::post('user/changestatus','Api\UserCtrl@postChangeStatusOnline');
-Route::get('/users-notification', 'UserNotificationController@getNotification');
+Route::get('/users-notification', 'Api\UserCtrl@userNotification');
 // User Meta
 Route::post('user/meta/update-status', 'Api\UserMetaCtrl@postStatusMeta');
 Route::post('user/meta/get-status', 'Api\UserMetaCtrl@getStatusMeta');

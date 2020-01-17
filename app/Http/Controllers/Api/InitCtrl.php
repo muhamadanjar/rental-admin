@@ -9,15 +9,15 @@ use App\Rental\Models\UserMeta;
 use Validator;
 class InitCtrl extends ApiCtrl{
     public function init(Request $request){
-        $check1 = User::where('email', $request->phonenumber)->first();
+        $check1 = User::where('email', $request->email)->first();
         if($check1) {
-            return response()->json(['status'=>'error', 'message'=> 'Phonenumber is already exists', 'code'=>404]);
-        }
-
-        $check2 = User::where('phonenumber', $request->email)->first();
-        if($check2) {
             return response()->json(['status'=>'error', 'message'=> 'Email is already exists', 'code'=>404]);
         }
+
+        // $check2 = User::where('phonenumber', $request->phonenumber)->first();
+        // if($check2) {
+        //     return response()->json(['status'=>'error', 'message'=> 'Email is already exists', 'code'=>404]);
+        // }
 
         $check3 = UserMeta::where('meta_key', 'EMAIL')->where('meta_value', $request->email)->first();
         if($check3) {
@@ -33,7 +33,7 @@ class InitCtrl extends ApiCtrl{
         ];
 
         $validator = Validator::make($request->all(), [
-            'phonenumber'   => 'required|unique:users|max:15|min:10',
+            // 'phonenumber'   => 'required|unique:users|max:15|min:10',
             'email'         => 'required|unique:users|email|max:225',
             'password'      => 'required|max:60'
         ], $messages );
@@ -48,7 +48,7 @@ class InitCtrl extends ApiCtrl{
             $user = new User();
             $user->email = $email;
             $user->username = $email;
-            $user->phonenumber = $request->phonenumber;
+            // $user->phonenumber = $request->phonenumber;
             $user->password = Hash::make($request->password);
             $user->isadmin = 0;
             $user->isactived = 0;

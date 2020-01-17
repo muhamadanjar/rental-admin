@@ -41,7 +41,7 @@ class AuthCtrl extends Controller{
         try {
             $credentials = request(['email', 'password']);
             $credentials['isactived'] = 1;
-            $credentials['isverified'] = 1;
+            // $credentials['isverified'] = 1;
             if(Auth::guard('users')->attempt($credentials)){
                 // $user = Auth::guard('users')->user();
                 // $success['token'] = $user->createToken('MyApp')->accessToken;
@@ -56,6 +56,7 @@ class AuthCtrl extends Controller{
                     $token->expires_at = Carbon::now()->addWeeks(1);        
                     $token->save();        
                 return response()->json([
+                    'status'=>'success',
                     'access_token' => $tokenResult->accessToken,
                     'token_type' => 'Bearer',
                     'data'=>$user,
@@ -65,13 +66,17 @@ class AuthCtrl extends Controller{
             }else{
                 return response()->json([
                     'message_code' => 'INVALID_PASSWORD',
-                    'message' => trans('auth.failed')
-                ], 401);
+                    'message' => trans('auth.failed'),
+                    'code'=> 401,
+                    'status'=>'failed'
+                ], 200);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'message' => trans('auth.failed')
-            ], 401);
+                'code'=>401,
+                'message' => trans('auth.failed'),
+                'status'=>'failed'
+            ], 200);
         }
         
                     
