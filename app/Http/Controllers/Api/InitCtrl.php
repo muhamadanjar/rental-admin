@@ -8,6 +8,8 @@ use App\User;
 use App\Rental\Models\UserMeta;
 use App\Rental\Models\Notification;
 use Validator;
+use DB;
+use Mail;
 class InitCtrl extends ApiCtrl{
     public function init(Request $request){
         $check1 = User::where('email', $request->email)->first();
@@ -46,6 +48,7 @@ class InitCtrl extends ApiCtrl{
         $email = (!empty($request->input('email')) ? $request->input('email') : $request->phonenumber );
 
         try{
+            DB::beginTransaction();
             $user = new User();
             $user->email = $email;
             $user->username = $email;
@@ -68,16 +71,23 @@ class InitCtrl extends ApiCtrl{
             $insert['jenis']    = 'REGISTER';
             $notif = Notification::insert($insert);
 
-            Mail::send('email.orderconfirm',['data'=>$data],
+            $verification_code = str_random(30); //Generate verification code
+            DB::table('user_verifications')->insert(['user_id'=>$user->id,'token'=>$verification_code]);
+            $subject = "Please verify your email address.";
+            $email = $user->email;
+            $name = $user->email;
+            Mail::send('emails.verify', ['email' => $email,'name' => $name, 'verification_code' => $verification_code],
                 function($mail) use ($email, $name, $subject){
                     $mail->from(getenv('MAIL_USERNAME'), "Trans Utama");
                     $mail->to($email, $name);
                     $mail->subject($subject);
             });
+            DB::commit();
             return response()->json(['status'=>'success', 'message'=>'Data berhasil di simpan, Tolong cek email untuk aktifasi data.', 'code'=>200]);
 
         }
         catch (PDOException $e) {
+            DB::rollback();
             return response()->json(['status'=>'error', 'message'=> $e->getMessage(), 'code'=>404]);
         }
     
