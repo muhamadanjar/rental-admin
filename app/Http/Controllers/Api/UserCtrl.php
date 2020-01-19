@@ -7,6 +7,7 @@ use App\Rental\Models\UserSaldo;
 use App\Rental\Models\Reviews;
 use App\Rental\Models\Notification;
 use App\Rental\Models\Review;
+use App\Rental\Models\Order;
 use Validator;
 use Carbon\Carbon;
 class UserCtrl extends ApiCtrl
@@ -22,7 +23,7 @@ class UserCtrl extends ApiCtrl
             $data[$k]['meta'] = $v->user_metas;
             $data[$k]['mobil'] = $v->mobil;
         }
-        return response()->json(['status'=>true,'data'=>$data],200);
+        return response()->json(['status'=>'success','data'=>$data],200);
     }
 
     public function postUpdateLocation(Request $request){
@@ -38,12 +39,12 @@ class UserCtrl extends ApiCtrl
                 $location = UserMeta::where('meta_key', 'LOCATION')
 		    		->where('meta_users', $this->auth->id)
 		    		->update(['meta_value'=>$request->meta_value]);
-                return response()->json(['status'=>true,'data'=>$user,'message'=>'driver telah update lokasi'],200);
+                return response()->json(['status'=>'success','data'=>$user,'message'=>'driver telah update lokasi'],200);
             }else{
-                return response()->json(['status'=>false,'message'=>'User tidak di temukan']);
+                return response()->json(['status'=>'error','message'=>'User tidak di temukan']);
             }
         } catch (\Throwable $th) {
-            return response()->json(['status'=>false,'message'=>$th->getMessage()]);
+            return response()->json(['status'=>'error','message'=>$th->getMessage()]);
         }
         
     }
@@ -152,6 +153,9 @@ class UserCtrl extends ApiCtrl
 
     public function userNotification(Request $request){
         try {
+            if (!$this->auth) {
+                return response()->json(['status'=>'error', 'message'=>'Invalid Credential Header!', 'code'=>404]);
+            }
             $userId = UserMobile::select('id')->find($this->auth->id);
             // if($request->userid == $user->id) {
                 $n = Notification::orderBy('id','DESC')->where('user_id',$userId)->get();
@@ -334,6 +338,16 @@ class UserCtrl extends ApiCtrl
                 return response()->json(array('error'=>true,'message'=>'Ada Parameter yang kurang'));
             }
             $auth = $this->auth;
+            if (!$auth) {
+                return response()->json(array('status'=>'error','message'=>'Invalid Credential Header!'));
+            }
+            $order = Order::where('order_code',$request->tripCode)->first();
+            if (!order) {
+                return response()->json(array('status'=>'error','message'=>'Data Pemesanan tidak di temukan!'));
+            }
+            if ($order->status <= 4) {
+                return response()->json(array('status'=>'error','message'=>'Data Pemesanan belum selesai, anda belum boleh melakukan review!'));
+            }
             $model = new Review();
             $model->trip_code = $request->tripCode;
             $model->user_id = $auth->id;
@@ -351,7 +365,7 @@ class UserCtrl extends ApiCtrl
                 'user_id'=> '1',
             ));
 
-            return response()->json(array('status'=>true,'message'=>'Review Berhasil di kirim'));
+            return response()->json(array('status'=>'success','message'=>'Review Berhasil di kirim'));
             
 
         } catch (\Throwable $e) {

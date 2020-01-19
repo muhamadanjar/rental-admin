@@ -46,11 +46,11 @@ class UserRepository extends BaseInterface implements UserInterface {
             							'App-Key' => 'een9K8k2yJQh3rkmPs6Q31aT31RsFM0C' 
             						]
         	]);
-        	$response = $client->post('https://api.piko.id:5000/login',
+        	$response = $client->post('https://rental-admin.com/api/auth/login',
 	            ['body' => json_encode(
 	                [
-	                    'phonenumber' => "admin@piko.id",
-	                    'password' => "ksusb123",
+	                    'email' => "admin@rentaadmin.com",
+	                    'password' => "password",
 	            	]),
 		        	'verify' => false
 	        	]

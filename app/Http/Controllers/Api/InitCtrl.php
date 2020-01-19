@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Hash;
 use App\User;
 use App\Rental\Models\UserMeta;
+use App\Rental\Models\Notification;
 use Validator;
 class InitCtrl extends ApiCtrl{
     public function init(Request $request){
@@ -52,12 +53,28 @@ class InitCtrl extends ApiCtrl{
             $user->password = Hash::make($request->password);
             $user->isadmin = 0;
             $user->isactived = 0;
+            $user->isanggota = 1;
             $exec = $user->save();
             if(!$exec) {
                 return response()->json(['status'=>'error', 'message'=>'Failed to register', 'code'=>200]);
             }
 
-            return response()->json(['status'=>'success', 'message'=>'Data successfully saved', 'code'=>200]);
+            $message = 'Ada User yang baru saja mendaftar';
+            $insert['notif_date'] = date('Y-m-d H:i:s');
+            $insert['notif_from'] = 'USER';
+            $insert['message']    = $message;
+            $insert['status']     = 0;
+            $insert['user_id']    = 1;
+            $insert['jenis']    = 'REGISTER';
+            $notif = Notification::insert($insert);
+
+            Mail::send('email.orderconfirm',['data'=>$data],
+                function($mail) use ($email, $name, $subject){
+                    $mail->from(getenv('MAIL_USERNAME'), "Trans Utama");
+                    $mail->to($email, $name);
+                    $mail->subject($subject);
+            });
+            return response()->json(['status'=>'success', 'message'=>'Data berhasil di simpan, Tolong cek email untuk aktifasi data.', 'code'=>200]);
 
         }
         catch (PDOException $e) {

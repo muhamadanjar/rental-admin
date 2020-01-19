@@ -71,20 +71,39 @@ class OrderCtrl extends Controller{
         }
     }
 
+    public function postCheckOrder(Request $request)
+    {
+        $order = Order::where('order_user_id',$this->auth->id)->where('order_status','<=',4)->first();
+        if ($order) {
+            return response()->json(['status'=>'success','data'=>$order,'code'=>200]);
+        }
+
+    }
+
     public function postUpdateOrder(Request $request){
         try {
             $t = Order::find($request->order_id);
-            $auth = $request->user('api');
+            $auth = $this->auth;
+
+            if (!$auth) {
+                return response()->json(array('status'=>'error','code'=>400,'message'=>trans('auth.not_found')));
+            }
+            
             if ($t == NULL) { return response()->json(['status'=>false,'message'=>trans('not_found')]); }
             if ($t->order_status > $request->status) {
-                return response()->json(['message'=>'status tidak bisa di ulang']);
+                return response()->json(['status'=>'error','message'=>'status tidak bisa di ulang']);
+            }elseif($t->order_status == $request->status){
+                return response()->json(['status'=>'error','message'=>trans('order.status_same')]);
+            }elseif($t->order_status == 4 || $t->order_status == 5 || $t->order_status == 6){
+                return response()->json(['status'=>'error','message'=>trans('order.status_cant_change')]);
             }
             if($auth->isanggota != Config::get('app.user_driver')){
-                return response()->json(['message'=>trans('order.not_driver')]);
+                return response()->json(['status'=>'error','message'=>trans('order.not_driver')]);
             }
             if ($t->order_driver_id != $auth->id) {
-                return response()->json(['message'=>trans('order.not_allowed')]);
+                return response()->json(['status'=>'error','message'=>trans('order.not_allowed')]);
             }
+            
             $t->order_status = $request->status;
             $t->save();
             if ($request->status == 6) {
@@ -92,9 +111,9 @@ class OrderCtrl extends Controller{
                 $user->isavail = 1;
                 $user->save();
             }
-            return response()->json(['status'=>true,'message'=>"Status Trip {$t->order_code}"]);
+            return response()->json(['status'=>'success','message'=>"Status Trip {$t->order_code}"]);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>false,'message'=>$th->getMessage()]);
+            return response()->json(['status'=>'success','message'=>$th->getMessage()]);
         }
         
     }

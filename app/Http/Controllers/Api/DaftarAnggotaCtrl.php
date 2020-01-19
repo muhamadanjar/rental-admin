@@ -90,7 +90,7 @@ class DaftarAnggotaCtrl extends ApiCtrl
     public function SetPIN(Request $request)
     {
 
-        if (!app()->make('request')->header('App-ID') == env('APP_ID') && !app()->make('request')->header('App-Key') == env('APP_KEY')) {
+        if (!$this->auth) {
             return response()->json(['status' => 'error', 'message' => "Invalid Header Credential!", 'code' => 404]);
         }
 
@@ -108,13 +108,11 @@ class DaftarAnggotaCtrl extends ApiCtrl
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'message' => $validator->errors()->all(), 'code' => 404]);
         }
-
         try {
-
             $hasher = app()->make('hash');
 
             DB::beginTransaction();
-            $exec = UserDaftarAnggota::where('user_id', $this->auth->getResourceOwnerID())->update(
+            $exec = UserDaftarAnggota::where('user_id', $this->auth->id)->update(
                 ["pin_password" => $hasher->make($request->pin_password)]
             );
             DB::commit();
@@ -137,7 +135,7 @@ class DaftarAnggotaCtrl extends ApiCtrl
     public function ValidatePIN(Request $request)
     {
 
-        if (!app()->make('request')->header('App-ID') == env('APP_ID') && !app()->make('request')->header('App-Key') == env('APP_KEY')) {
+        if (!$this->auth) {
             return response()->json(['status' => 'error', 'message' => "Invalid Header Credential!", 'code' => 404]);
         }
 
@@ -158,7 +156,7 @@ class DaftarAnggotaCtrl extends ApiCtrl
 
         try {
             $hasher = app()->make('hash');
-            $user = UserDaftarAnggota::where('user_id', $this->auth->getResourceOwnerID())->first();
+            $user = UserDaftarAnggota::where('user_id', $this->auth->id)->first();
             $exec = $hasher->check($request->pin_password, $user->pin_password);
             if ($exec) {
                 return response()->json(['status' => 'success',

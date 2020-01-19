@@ -52,8 +52,14 @@ Route::get('getprovinsi','Api\CommonCtrl@getProvinsi');
 Route::post('reviews','Api\CommonCtrl@postReview');
 
 //Order
+Route::group([
+    'prefix' => 'driver'
+], function () {
+    Route::post('booking/update-status','Api\OrderCtrl@postUpdateOrder');
+});
 Route::post('booking','Api\OrderCtrl@postOrder');
 Route::post('booking/update-status','Api\OrderCtrl@postUpdateOrder');
+Route::post('booking/check-status','Api\OrderCtrl@postCheckOrder');
 Route::post('topup/saldo','Api\OrderCtrl@postTopUpSaldo');
 Route::post('topup/bukti','Api\OrderCtrl@postUploadBukti');
 Route::post('booking/history','Api\OrderCtrl@getHistoryOrderByUser');
