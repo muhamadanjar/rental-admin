@@ -247,18 +247,22 @@ class OrderCtrl extends Controller{
         try {
             $auth = Auth::guard('api');
             $user = $auth->user();
-            if($user->isRole('customer')){
-                $trip = Trip::where('trip_bookby',$user->id)->orderBy('trip_date','DESC')->get();
-                $trip_count = Trip::where('trip_bookby',$user->id)->where('trip_type',$type)->orderBy('trip_date','DESC')->count();
-            }else if($user->isRole('driver')){
-                $trip = Trip::where('trip_driver',$user->id)->orderBy('trip_date','DESC')->get();
-                $trip_count = Trip::where('trip_driver',$user->id)->where('trip_type',$type)->orderBy('trip_date','DESC')->count();
+            if (!$this->auth) {
+                return response()->json(['status' => 'error', 'message' => "Invalid Header Credential!", 'code' => 404]);
+            }
+            $message = 'Mengambil data';
+            if($user->isanggota == config('app.user_customer')){
+                $trip = Order::where('order_user_id',$user->id)->orderBy('order_tgl_pesanan','DESC')->get();
+                $trip_count = Order::where('order_user_id',$user->id)->where('order_jenis',$type)->orderBy('order_tgl_pesanan','DESC')->count();
+            }else if($user->isanggota == config('app.user_driver')){
+                $trip = Order::where('order_driver_id',$user->id)->orderBy('order_tgl_pesanan','DESC')->get();
+                $trip_count = Order::where('order_driver_id',$user->id)->where('order_jenis',$type)->orderBy('order_tgl_pesanan','DESC')->count();
             }
             
             if ($trip_count<=0) {
                 $message = 'Anda Belum Memiliki Transaksi';
             }
-            return response()->json(['status'=>true,'data'=>$trip,'message'=>$message]);
+            return response()->json(['status'=>'success','data'=>$trip,'message'=>$message]);
         } catch (\Exception $e) {
             return response()->json(['status'=>false,'message'=>$e->getMessage()]);
         }
