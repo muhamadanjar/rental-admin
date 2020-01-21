@@ -27,9 +27,11 @@ class OrderCtrl extends Controller{
                 return response()->json(array('status'=>'error','code'=>400,'message'=>trans('auth.not_found')));
             }
 
-            if ($auth->isavail > 1) {
+            $order = Order::where('order_user_id',$this->auth->id)->where('order_status','<',4)->first();
+            if ($order) {
                 return response()->json(array('status'=>'error','code'=>400,'message'=>trans('order.intransaction')));
             }
+
             DB::beginTransaction();
             $noRef = substr(number_format(time() * rand(),0,'',''),0,10);
             $orderCode = substr(number_format(time() * rand(),0,'',''),0,10);

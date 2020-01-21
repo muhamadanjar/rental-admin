@@ -97,6 +97,7 @@ class AuthCtrl extends Controller{
   
     public function user(Request $request){
         $user = $request->user();
-        return response()->json(['status'=>true,'data'=>$user]);
+        
+        return response()->json(['status'=>true,'data'=>$user,'meta'=>$user->user_metas,'saldo'=>$user->saldo]);
     }
 }

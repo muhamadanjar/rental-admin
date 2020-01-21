@@ -43,6 +43,6 @@ class User extends Authenticatable{
     }
 
     public function saldo(){
-        return $this->hasOne(Config::get("rental.model_namespace")."\UserSaldo","user_id");
+        return $this->hasOne(Config::get("rental.model_namespace") . "\UserSaldo","user_id","id");
     }
 }
