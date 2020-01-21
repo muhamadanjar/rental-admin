@@ -2,7 +2,7 @@
 
 @section('content-admin')
   <?php
-    $id = '';
+    $id = $userId+1;
     $no_plat= old('no_plat');
     $merk=old('merk');
     $type=old('type');

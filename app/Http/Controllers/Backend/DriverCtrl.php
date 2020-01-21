@@ -94,7 +94,8 @@ class DriverCtrl extends MainCtrl{
 
     public function create(){
         session(['aksi'=>'add']);
-        return view('backend.driver.form');
+        $userId = User::max('id');
+        return view('backend.driver.form')->with('userId',$userId);
     }
 
     public function edit($id){
@@ -163,6 +164,7 @@ class DriverCtrl extends MainCtrl{
                     $driver->password = bcrypt($request->password);           
                 }
                 $driver->save();
+                DB::commit();
 
                 $meta_users = array();
                 $m = array('NO_KTP','NAMA_LENGKAP','ALAMAT');
@@ -180,7 +182,6 @@ class DriverCtrl extends MainCtrl{
                 $meta = new UserMeta();
                 // dd($meta_users);
                 foreach ($meta_users as $key => $value) {
-                    echo $m[$key];
                     $checkmeta = UserMeta::where('meta_users',$value['meta_users'])->where('meta_key',$m[$key])->first();
                     if ($checkmeta) {
                         $exec = $meta::where('meta_users',$value['meta_users'])->where('meta_key',$m[$key])->update($meta_users[$key]);
@@ -217,12 +218,13 @@ class DriverCtrl extends MainCtrl{
                 $mobil->merk = $request->merk;
                 $mobil->warna = $request->warna;
                 $mobil->harga = $request->harga;
+                $mobil->user_id = $driver->id;
                 $mobil->tahun = ($request->tahun =='') ? 0 : $request->tahun;
                 $mobil->foto = ($request->foto =='') ? 'http://placehold.it/160' : $request->foto;
                 $mobil->harga_perjam = $request->harga_perjam;   
                 $mobil->save();
                 Flash::success(trans('flash/mobil.drivercreated'));
-                \DB::commit();
+                
 
                 return redirect()->route($this->params['index']);
             

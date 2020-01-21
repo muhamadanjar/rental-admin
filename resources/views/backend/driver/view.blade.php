@@ -5,7 +5,7 @@
             <h3 class="card-title">Data Driver</h3>
             <div class="card-tools text-right">
                 <div class="btn-group">
-                    {{-- <a href="{{ route('backend.promo.create') }}" class="btn btn-sm btn-primary"><span class="fa fa-plus"></span> Tambah</a> --}}
+                    <a href="{{ route('driver.create') }}" class="btn btn-sm btn-primary"><span class="fa fa-plus"></span> Tambah</a>
                     
                 </div>
             </div>

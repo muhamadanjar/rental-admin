@@ -59,6 +59,7 @@ Route::group(['middleware' => ['web', 'auth', 'permissions.required']], function
     Route::get('driver/data','Backend\DriverCtrl@data')->name('driver-ajaxData');
     Route::get('driver/{id}/detil','Backend\DriverCtrl@show')->name('driver-detail');
     Route::post('driver/addsaldo','Backend\DriverCtrl@addsaldo')->name('driver.addsaldo');
+    Route::get('driver/add','Backend\DriverCtrl@create')->name('driver.create');
     Route::get('driver/{id}/edit','Backend\DriverCtrl@edit')->name('driver.edit');
     Route::post('driver','Backend\DriverCtrl@post')->name('driver.post');
     Route::post('driver/{id}/delete','Backend\DriverCtrl@destroy')->name('driver.destroy');
