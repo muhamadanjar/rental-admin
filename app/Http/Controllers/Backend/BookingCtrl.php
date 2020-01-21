@@ -12,6 +12,7 @@ use App\Http\Controllers\MainCtrl;
 use Illuminate\Http\Request as httpRequest;
 use App\Rental\Contract\IOrderRepository as currentRepo;
 use Yajra\DataTables\Facades\DataTables;
+use App\Rental\Models\Order;
 use Hash;
 use Session;
 use Auth;
@@ -100,11 +101,13 @@ class BookingCtrl extends MainCtrl{
         $book = $this->repository->findByField('order_id',$id);
         if ($request->isMethod('post')) {
             $driver = User::find($request->assigned_for);
-            $check = $this->repository->findByField('order_driver_id',$driver->id)->findWhere('order_status','<',4)->findWhere('order_status','>',0);
+            $check = Order::where('order_driver_id',$driver->id)->where('order_status','<',4)->where('order_status','>',0)->first();
+            // $check = $this->repository->findByField('order_driver_id',$driver->id)->findByField('order_status','<',4)->findWhere('order_status','>',0);
             if ($driver->isavail > 1 || $check != NULL) {
                 Flash::error("Ada Transaksi yang belum beres");
             }else{
                 $book->order_driver_id = $request->assigned_for;
+                $book->order_status = 1;
                 $book->save();
                 $driver->isavail = 2;
                 $driver->save();
