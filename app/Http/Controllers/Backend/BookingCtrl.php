@@ -26,7 +26,10 @@ class BookingCtrl extends MainCtrl{
             'view' =>"backend.booking.view",
             'view_show' => "backend.booking.read",
         );
-        $this->route = array('index'=>'backend.dashboard.index');
+        $this->route = array(
+            'index'=>'backend.dashboard.index',
+            'read'=>'admin.booking'
+        );
     }
 
     public function view(){
@@ -102,10 +105,15 @@ class BookingCtrl extends MainCtrl{
         if ($request->isMethod('post')) {
             $driver = User::find($request->assigned_for);
             $check = Order::where('order_driver_id',$driver->id)->where('order_status','<',4)->where('order_status','>',0)->first();
-            // $check = $this->repository->findByField('order_driver_id',$driver->id)->findByField('order_status','<',4)->findWhere('order_status','>',0);
+            
             if ($driver->isavail > 1 || $check != NULL) {
                 Flash::error("Ada Transaksi yang belum beres");
+                return redirect()->route($this->route['index']);
             }else{
+                if ($book->order_status >= 4 || $book->order_driver_id != NULL) {
+                    Flash::error("Status tidak bisa di rubah");
+                    return redirect()->route($this->route['index']);
+                }
                 $book->order_driver_id = $request->assigned_for;
                 $book->order_status = 1;
                 $book->save();
