@@ -10,17 +10,13 @@ use App\Rental\Models\Notification;
 use Validator;
 use DB;
 use Mail;
+use Carbon\Carbon;
 class InitCtrl extends ApiCtrl{
     public function init(Request $request){
         $check1 = User::where('email', $request->email)->first();
         if($check1) {
             return response()->json(['status'=>'error', 'message'=> 'Email is already exists', 'code'=>404]);
         }
-
-        // $check2 = User::where('phonenumber', $request->phonenumber)->first();
-        // if($check2) {
-        //     return response()->json(['status'=>'error', 'message'=> 'Email is already exists', 'code'=>404]);
-        // }
 
         $check3 = UserMeta::where('meta_key', 'EMAIL')->where('meta_value', $request->email)->first();
         if($check3) {
@@ -36,7 +32,7 @@ class InitCtrl extends ApiCtrl{
         ];
 
         $validator = Validator::make($request->all(), [
-            // 'phonenumber'   => 'required|unique:users|max:15|min:10',
+            'phonenumber'   => 'required|unique:users|max:15|min:10',
             'email'         => 'required|unique:users|email|max:225',
             'password'      => 'required|max:60'
         ], $messages );
@@ -48,12 +44,13 @@ class InitCtrl extends ApiCtrl{
         $email = (!empty($request->input('email')) ? $request->input('email') : $request->phonenumber );
 
         try{
-            DB::beginTransaction();
+          DB::beginTransaction();
+            $password = Hash::make($request->password);
             $user = new User();
             $user->email = $email;
             $user->username = $email;
-            // $user->phonenumber = $request->phonenumber;
-            $user->password = Hash::make($request->password);
+            $user->phonenumber = $request->phonenumber;
+            $user->password = $password;
             $user->isadmin = 0;
             $user->isactived = 0;
             $user->isanggota = 1;
@@ -68,20 +65,20 @@ class InitCtrl extends ApiCtrl{
             $insert['message']    = $message;
             $insert['status']     = 0;
             $insert['user_id']    = 1;
-            $insert['jenis']    = 'REGISTER';
+            //$insert['jenis']    = 'REGISTER';
             $notif = Notification::insert($insert);
 
-            $verification_code = str_random(30); //Generate verification code
-            DB::table('user_verifications')->insert(['user_id'=>$user->id,'token'=>$verification_code]);
+            $verification_code = Hash::make(str_random(30)); //Generate verification code
+            DB::table('m_password')->insert(['user_id'=>$user->id,'password'=>$password,'token'=>$verification_code,'expired_at'=>Carbon::now()->addWeeks(2)]);
             $subject = "Please verify your email address.";
             $email = $user->email;
             $name = $user->email;
-            Mail::send('emails.verify', ['email' => $email,'name' => $name, 'verification_code' => $verification_code],
-                function($mail) use ($email, $name, $subject){
-                    $mail->from(getenv('MAIL_USERNAME'), "Trans Utama");
-                    $mail->to($email, $name);
-                    $mail->subject($subject);
-            });
+            //Mail::send('emails.verify', ['email' => $email,'name' => $name, 'verification_code' => $verification_code],
+            //    function($mail) use ($email, $name, $subject){
+            //        $mail->from(getenv('MAIL_USERNAME'), "Trans Utama");
+            //        $mail->to($email, $name);
+            //        $mail->subject($subject);
+            //});
             DB::commit();
             return response()->json(['status'=>'success', 'message'=>'Data berhasil di simpan, Tolong cek email untuk aktifasi data.', 'code'=>200]);
 
