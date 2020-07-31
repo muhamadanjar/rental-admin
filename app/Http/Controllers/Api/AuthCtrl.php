@@ -40,7 +40,7 @@ class AuthCtrl extends Controller{
         };
         try {
             $credentials = request(['email', 'password']);
-            $credentials['isactived'] = 1;
+            //$credentials['isactived'] = 1;
             // $credentials['isverified'] = 1;
             if(Auth::guard('users')->attempt($credentials)){
                 // $user = Auth::guard('users')->user();
