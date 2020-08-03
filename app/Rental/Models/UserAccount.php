@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\User;
 class UserSaldo extends Model
 {
-    protected $table = 'm_users_saldo';
+    protected $table = 'm_user_account';
     protected $primaryKey = 'user_id';
     public $timestamps = false;
 
